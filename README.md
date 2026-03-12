@@ -9,7 +9,7 @@ link full SQL: https://drive.google.com/file/d/1Kw5zzqfW2pw_1CmOtNSe6tQLJsUQjP-u
 
 Setting tại JdbiConnector: 
 
-String url = "jdbc:mysql://localhost:3306/ecommerceweb?useSSL=false&serverTimezone=UTC";
+                String url = "jdbc:mysql://localhost:3306/ecommerceweb?useSSL=false&serverTimezone=UTC";
 
                 String user = "root";
                 
