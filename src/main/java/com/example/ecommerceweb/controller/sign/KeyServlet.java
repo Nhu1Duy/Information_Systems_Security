@@ -47,17 +47,15 @@ public class KeyServlet extends HttpServlet {
                 KeyPair pair = gen.generateKeyPair();
 
                 String pubB64 = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
-                String pubPem = "-----BEGIN PUBLIC KEY-----\n" + pubB64 + "\n-----END PUBLIC KEY-----";
 
                 String privB64 = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
-                String privPem = "-----BEGIN PRIVATE KEY-----\n" + privB64 + "\n-----END PRIVATE KEY-----";
 
-                KeyDAO.insertKey(user.getId(), pubPem);
+                KeyDAO.insertKey(user.getId(), pubB64);
 
                 resp.setContentType("application/octet-stream");
                 resp.setHeader("Content-Disposition",
                         "attachment; filename=private_key_" + user.getUsername() + ".pem");
-                resp.getWriter().write(privPem);
+                resp.getWriter().write(privB64);
 
                 pair = null;
                 System.gc();

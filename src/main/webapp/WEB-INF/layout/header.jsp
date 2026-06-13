@@ -25,6 +25,12 @@
                     </a>
                 </li>
             </c:if>
+            <c:if test="${not empty sessionScope.user}">
+                <li>
+                    <a href="${pageContext.request.contextPath}/key"
+                       class="${currentPage == 'key' ? 'active' : ''}">Khóa số</a>
+                </li>
+            </c:if>
             <li>
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">

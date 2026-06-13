@@ -41,7 +41,7 @@
         <c:choose>
             <c:when test="${activeKey != null}">
                 <p>Trạng thái: <span class="key-status-active">ACTIVE</span></p>
-                <p>Tạo lúc: <fmt:formatDate value="${activeKey.createdAt}" pattern="dd/MM/yyyy HH:mm"/></p>
+                <p>Tạo lúc: ${activeKey.createdAt.dayOfMonth}/${activeKey.createdAt.monthValue}/${activeKey.createdAt.year} ${activeKey.createdAt.hour}:${activeKey.createdAt.minute}</p>
                 <div class="key-pem">${activeKey.publicKey}</div>
                 <br/>
                 <form action="key" method="POST" style="display:inline;"
