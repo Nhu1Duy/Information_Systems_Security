@@ -9,60 +9,45 @@ public class Order {
     private int userId;
     private String customerName;
     private String status;
+    private String canonicalJson;
+    private String signature;
+    private String sigStatus;
+    private int keyId;
 
-    public Order() {
-    }
+    public Order() {}
 
     public Order(double total, int userId) {
         this.total = total;
         this.userId = userId;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public Date getOrderDate() { return orderDate; }
+    public void setOrderDate(Date orderDate) { this.orderDate = orderDate; }
 
-    public Date getOrderDate() {
-        return orderDate;
-    }
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
 
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
-    public double getTotal() {
-        return total;
-    }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public int getUserId() {
-        return userId;
-    }
+    public String getCanonicalJson() { return canonicalJson; }
+    public void setCanonicalJson(String canonicalJson) { this.canonicalJson = canonicalJson; }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    public String getSignature() { return signature; }
+    public void setSignature(String signature) { this.signature = signature; }
 
-    public String getCustomerName() {
-        return customerName;
-    }
+    public String getSigStatus() { return sigStatus; }
+    public void setSigStatus(String sigStatus) { this.sigStatus = sigStatus; }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public int getKeyId() { return keyId; }
+    public void setKeyId(int keyId) { this.keyId = keyId; }
 }

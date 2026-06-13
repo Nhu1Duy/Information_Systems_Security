@@ -10,6 +10,7 @@ import org.jdbi.v3.core.statement.PreparedBatch;
 import java.util.List;
 
 public class OrderDAO {
+
     public static int insertOrder(Order order) {
         Jdbi jdbi = JdbiConnector.get();
         try (Handle handle = jdbi.open()) {
@@ -26,8 +27,9 @@ public class OrderDAO {
     public static void insertOrderItems(List<OrderItem> items) {
         Jdbi jdbi = JdbiConnector.get();
         try (Handle handle = jdbi.open()) {
-            String sql = "INSERT INTO order_items(order_id, product_id, quantity, price) VALUES(:orderId, :productId, :quantity, :price)";
-            PreparedBatch batch = handle.prepareBatch(sql); // Thực thi sau vòng For (tối ưu)
+            String sql = "INSERT INTO order_items(order_id, product_id, quantity, price) " +
+                    "VALUES(:orderId, :productId, :quantity, :price)";
+            PreparedBatch batch = handle.prepareBatch(sql);
             for (OrderItem item : items) {
                 batch.bind("orderId", item.getOrderId())
                         .bind("productId", item.getProductId())
@@ -37,7 +39,6 @@ public class OrderDAO {
             }
             batch.execute();
         }
-
     }
 
     public static void updateStock(int productId, int quantity) {
@@ -54,15 +55,56 @@ public class OrderDAO {
     public static List<Order> getAllOrders() {
         Jdbi jdbi = JdbiConnector.get();
         try (Handle handle = jdbi.open()) {
-            // SQL join để lấy customerName từ bảng users
             String sql = "SELECT o.id, o.order_date as orderDate, o.total, o.user_id as userId, " +
-                    "u.username as customerName, o.status " +
+                    "u.username as customerName, o.status, " +
+                    "o.canonical_json as canonicalJson, o.signature, " +
+                    "o.sig_status as sigStatus, o.key_id as keyId " +
                     "FROM orders o JOIN users u ON o.user_id = u.id " +
                     "ORDER BY o.order_date DESC";
-
             return handle.createQuery(sql)
                     .mapToBean(Order.class)
                     .list();
+        }
+    }
+
+    public static Order getOrderById(int id) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle handle = jdbi.open()) {
+            String sql = "SELECT o.id, o.order_date as orderDate, o.total, o.user_id as userId, " +
+                    "o.status, o.canonical_json as canonicalJson, o.signature, " +
+                    "o.sig_status as sigStatus, o.key_id as keyId " +
+                    "FROM orders o WHERE o.id = :id";
+            return handle.createQuery(sql)
+                    .bind("id", id)
+                    .mapToBean(Order.class)
+                    .findOne().orElse(null);
+        }
+    }
+
+    // Lưu canonical_json + signature sau khi user ký xong
+    public static void saveSignature(int orderId, String canonicalJson,
+                                     String signature, int keyId) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle h = jdbi.open()) {
+            h.createUpdate(
+                            "UPDATE orders SET canonical_json=:cj, signature=:sig, " +
+                                    "sig_status='SIGNED', key_id=:kid WHERE id=:id")
+                    .bind("cj", canonicalJson)
+                    .bind("sig", signature)
+                    .bind("kid", keyId)
+                    .bind("id", orderId)
+                    .execute();
+        }
+    }
+
+    // Cập nhật kết quả verify
+    public static void updateSigStatus(int orderId, String sigStatus) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle h = jdbi.open()) {
+            h.createUpdate("UPDATE orders SET sig_status=:ss WHERE id=:id")
+                    .bind("ss", sigStatus)
+                    .bind("id", orderId)
+                    .execute();
         }
     }
 
@@ -84,5 +126,14 @@ public class OrderDAO {
                     .execute();
         }
     }
-}
 
+    public static void saveCanonicalJson(int orderId, String canonicalJson) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle h = jdbi.open()) {
+            h.createUpdate("UPDATE orders SET canonical_json=:cj WHERE id=:id")
+                    .bind("cj", canonicalJson)
+                    .bind("id", orderId)
+                    .execute();
+        }
+    }
+}

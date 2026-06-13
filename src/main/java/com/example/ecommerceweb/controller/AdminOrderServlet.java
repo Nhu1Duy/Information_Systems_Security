@@ -1,19 +1,22 @@
-// Source - https://stackoverflow.com/a/77403079
-// Posted by Ali, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-03-06, License - CC BY-SA 4.0
-
 package com.example.ecommerceweb.controller;
 
-import java.io.*;
+import com.example.ecommerceweb.DAO.KeyDAO;
+import com.example.ecommerceweb.DAO.OrderDAO;
+import com.example.ecommerceweb.model.KeyStore;
+import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.util.CryptoUtil;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import java.io.IOException;
+import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.ecommerceweb.DAO.OrderDAO;
-import com.example.ecommerceweb.model.Order;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
 @WebServlet("/adminOrder")
 public class AdminOrderServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -34,10 +37,15 @@ public class AdminOrderServlet extends HttpServlet {
                 response.sendRedirect("adminOrder");
                 break;
 
+            case "verify":
+                verifyOrder(request, response);
+                break;
+
             default:
                 List<Order> orders = OrderDAO.getAllOrders();
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("WEB-INF/adminView/adminOrder.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/adminView/adminOrder.jsp")
+                        .forward(request, response);
                 break;
         }
     }
@@ -46,5 +54,49 @@ public class AdminOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    private void verifyOrder(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int orderId = Integer.parseInt(request.getParameter("id"));
+        Order order = OrderDAO.getOrderById(orderId);
+        String result;
+
+        try {
+            if (order == null || order.getSignature() == null || order.getSignature().isEmpty()) {
+                result = "UNSIGNED";
+            } else {
+                KeyStore key = KeyDAO.getKeyById(order.getKeyId());
+
+                if (key == null) {
+                    result = "REJECTED";
+                } else {
+                    // Tầng 1: kiểm tra thời gian ký vs thời gian thu hồi
+                    if ("REVOKED".equals(key.getStatus()) && key.getRevokedAt() != null) {
+                        LocalDateTime orderTime = order.getOrderDate()
+                                .toInstant()
+                                .atZone(java.time.ZoneId.systemDefault())
+                                .toLocalDateTime();
+                        if (!orderTime.isBefore(key.getRevokedAt())) {
+                            result = "REJECTED";
+                            OrderDAO.updateSigStatus(orderId, result);
+                            response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);
+                            return;
+                        }
+                    }
+
+                    PublicKey publicKey = CryptoUtil.loadPublicKey(key.getPublicKey());
+                    boolean valid = CryptoUtil.verifySignature(
+                            order.getCanonicalJson(), order.getSignature(), publicKey);
+
+                    result = valid ? "VERIFIED" : "TAMPERED";
+                }
+            }
+        } catch (Exception e) {
+            result = "TAMPERED";
+        }
+
+        OrderDAO.updateSigStatus(orderId, result);
+        response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);
     }
 }
