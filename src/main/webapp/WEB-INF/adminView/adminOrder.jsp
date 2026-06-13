@@ -180,6 +180,7 @@
             <%-- Nút Verify — chỉ hiện khi đã ký --%>
           <c:if test="${o.sigStatus == 'SIGNED' or o.sigStatus == 'VERIFIED' or o.sigStatus == 'TAMPERED' or o.sigStatus == 'REJECTED'}">
             <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
+            <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
           </c:if>
 
             <%-- Nút Xóa --%>

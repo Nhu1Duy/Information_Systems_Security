@@ -43,8 +43,13 @@ public class SignOrderServlet extends HttpServlet {
         if (user == null) { resp.sendRedirect("login"); return; }
 
         int orderId      = Integer.parseInt(req.getParameter("orderId"));
-        String canonical = req.getParameter("canonicalJson");
         String signature = req.getParameter("signature");
+
+        Order order = OrderDAO.getOrderById(orderId);
+        if (order == null || order.getUserId() != user.getId()) {
+            resp.sendRedirect("order-success");
+            return;
+        }
 
         KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
         if (activeKey == null) {
@@ -53,7 +58,7 @@ public class SignOrderServlet extends HttpServlet {
             return;
         }
 
-        OrderDAO.saveSignature(orderId, canonical, signature, activeKey.getId());
+        OrderDAO.saveSignature(orderId, order.getCanonicalJson(), signature, activeKey.getId());
         resp.sendRedirect("order-success");
     }
 }

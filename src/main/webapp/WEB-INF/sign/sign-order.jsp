@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -64,7 +65,7 @@
         <h3><span class="step-badge">3</span>Paste chữ ký số vào đây</h3>
         <form action="sign-order" method="POST">
             <input type="hidden" name="orderId" value="${order.id}"/>
-            <input type="hidden" name="canonicalJson" value="${order.canonicalJson}"/>
+            <input type="hidden" name="canonicalJson" value="${fn:escapeXml(order.canonicalJson)}"/>
             <textarea class="sig-input" name="signature"
                       placeholder="Paste chuỗi chữ ký hex từ Tool ký số vào đây..." required></textarea>
             <br/><br/>
