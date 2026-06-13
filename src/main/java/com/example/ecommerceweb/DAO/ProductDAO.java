@@ -1,6 +1,6 @@
 package com.example.ecommerceweb.DAO;
 
-import com.example.ecommerceweb.DAO.JdbiConnector;
+import com.example.ecommerceweb.infor.JdbiConnector;
 import com.example.ecommerceweb.mapper.ProductMapper;
 import com.example.ecommerceweb.model.Category;
 import com.example.ecommerceweb.model.Product;

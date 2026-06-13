@@ -1,4 +1,4 @@
-package com.example.ecommerceweb.DAO;
+package com.example.ecommerceweb.infor;
 
 import org.jdbi.v3.core.Jdbi;
 

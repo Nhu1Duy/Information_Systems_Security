@@ -1,6 +1,6 @@
 package com.example.ecommerceweb.DAO;
 
-import com.example.ecommerceweb.model.Category;
+import com.example.ecommerceweb.infor.JdbiConnector;
 import com.example.ecommerceweb.model.Unit;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
