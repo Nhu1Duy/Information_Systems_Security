@@ -2,6 +2,7 @@ package com.example.ecommerceweb.signing.util;
 
 import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.signing.model.SignatureStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -18,51 +19,34 @@ public class SignatureVerifier {
 
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
-    /**
-     * Xác minh chữ ký của 1 đơn hàng.
-     *
-     * @param order đơn hàng cần xác minh (cần canonicalJson + signature + keyId)
-     * @param key   khóa công khai (KeyStore) ứng với order.getKeyId(), có thể null
-     * @return một trong: UNSIGNED, VERIFIED, TAMPERED, REJECTED
-     */
     public static String verify(Order order, KeyStore key) {
         String signature = order.getSignature();
         String canonicalJson = order.getCanonicalJson();
 
-        // Chưa ký -> không có gì để verify
         if (signature == null || signature.trim().isEmpty()) {
-            return "UNSIGNED";
+            return SignatureStatus.UNSIGNED;
         }
-
-        // Có chữ ký nhưng mất dữ liệu canonical_json -> coi như bị xáo trộn
         if (canonicalJson == null || canonicalJson.isEmpty()) {
-            return "TAMPERED";
+            return SignatureStatus.MISMATCH;
         }
-
-        // Không xác định được khóa đã dùng để ký
         if (key == null) {
-            return "REJECTED";
+            return SignatureStatus.MISMATCH;
         }
-
-        // Khóa đã bị thu hồi -> chữ ký không còn được công nhận, dù toán học có khớp hay không
         if (!"ACTIVE".equalsIgnoreCase(key.getStatus())) {
-            return "REJECTED";
+            return SignatureStatus.MISMATCH;
         }
 
         try {
             PublicKey publicKey = parsePublicKey(key.getPublicKey());
-
             Signature sig = Signature.getInstance(SIGNATURE_ALGORITHM);
             sig.initVerify(publicKey);
             sig.update(canonicalJson.getBytes(StandardCharsets.UTF_8));
-
             byte[] sigBytes = Base64.getDecoder().decode(signature.trim());
 
-            return sig.verify(sigBytes) ? "VERIFIED" : "TAMPERED";
+            return sig.verify(sigBytes) ? SignatureStatus.SIGNED : SignatureStatus.MISMATCH;
 
         } catch (Exception e) {
-            // Sai định dạng Base64, khóa lỗi, v.v. -> coi như dữ liệu/chữ ký không hợp lệ
-            return "TAMPERED";
+            return SignatureStatus.MISMATCH;
         }
     }
 
