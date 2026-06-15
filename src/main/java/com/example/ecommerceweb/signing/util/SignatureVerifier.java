@@ -1,6 +1,6 @@
-package com.example.ecommerceweb.util;
+package com.example.ecommerceweb.signing.util;
 
-import com.example.ecommerceweb.model.KeyStore;
+import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.model.Order;
 
 import java.nio.charset.StandardCharsets;

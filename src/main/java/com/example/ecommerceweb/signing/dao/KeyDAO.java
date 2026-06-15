@@ -1,7 +1,7 @@
-package com.example.ecommerceweb.DAO;
+package com.example.ecommerceweb.signing.dao;
 
 import com.example.ecommerceweb.infor.JdbiConnector;
-import com.example.ecommerceweb.model.KeyStore;
+import com.example.ecommerceweb.signing.model.KeyStore;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 

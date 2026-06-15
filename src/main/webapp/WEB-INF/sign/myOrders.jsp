@@ -21,11 +21,9 @@
         .status-completed { background:#d4edda; color:#155724; }
         .status-cancelled { background:#f8d7da; color:#721c24; }
 
-        .sig-VERIFIED { background:#d4edda; color:#155724; }
-        .sig-TAMPERED { background:#f8d7da; color:#721c24; }
-        .sig-REJECTED { background:#f8d7da; color:#721c24; }
-        .sig-SIGNED   { background:#cce5ff; color:#004085; }
         .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
+        .sig-SIGNED   { background:#d4edda; color:#155724; }
+        .sig-MISMATCH { background:#f8d7da; color:#721c24; }
 
         .btn-sign { background:#16a34a; color:#fff; border:none; padding:6px 14px;
             border-radius:4px; font-size:13px; text-decoration:none; white-space:nowrap; }
@@ -77,32 +75,21 @@
                     <td>
                         <c:choose>
                             <c:when test="${o.sigStatus == 'UNSIGNED'}">
-                                <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">
-                                    Ký đơn hàng
-                                </a>
+                                <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
                             </c:when>
                             <c:otherwise>
                                 <details>
                                     <summary>Xem chi tiết xác minh</summary>
-
                                     <c:choose>
-                                        <c:when test="${o.sigStatus == 'VERIFIED'}">
-                                            <p class="verify-msg verify-ok">Chữ ký hợp lệ — dữ liệu đơn hàng còn nguyên vẹn.</p>
-                                        </c:when>
-                                        <c:when test="${o.sigStatus == 'TAMPERED'}">
-                                            <p class="verify-msg verify-bad">Dữ liệu đơn hàng đã bị thay đổi sau khi ký!</p>
-                                        </c:when>
-                                        <c:when test="${o.sigStatus == 'REJECTED'}">
-                                            <p class="verify-msg verify-bad">Khóa dùng để ký đơn này đã bị thu hồi — chữ ký không còn được công nhận.</p>
+                                        <c:when test="${o.sigStatus == 'SIGNED'}">
+                                            <p class="verify-msg verify-ok">✅ Đã ký — chữ ký hợp lệ, dữ liệu nguyên vẹn.</p>
                                         </c:when>
                                         <c:otherwise>
-                                            <p class="verify-msg verify-warn">Đơn đã ký, đang chờ xác minh.</p>
+                                            <p class="verify-msg verify-bad">⚠️ Dữ liệu không đồng bộ — chữ ký không khớp dữ liệu hiện tại hoặc khóa ký không còn hợp lệ.</p>
                                         </c:otherwise>
                                     </c:choose>
-
                                     <div style="font-size:12px; color:#6b7280; margin-top:6px;">Canonical JSON</div>
                                     <div class="detail-box">${o.canonicalJson}</div>
-
                                     <div style="font-size:12px; color:#6b7280; margin-top:6px;">Chữ ký (Base64)</div>
                                     <div class="detail-box">${o.signature}</div>
                                 </details>

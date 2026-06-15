@@ -1,11 +1,11 @@
 package com.example.ecommerceweb.controller;
 
-import com.example.ecommerceweb.DAO.KeyDAO;
+import com.example.ecommerceweb.signing.dao.KeyDAO;
 import com.example.ecommerceweb.DAO.OrderDAO;
-import com.example.ecommerceweb.model.KeyStore;
+import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.model.Order;
 import com.example.ecommerceweb.model.User;
-import com.example.ecommerceweb.util.SignatureVerifier;
+import com.example.ecommerceweb.signing.util.SignatureVerifier;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

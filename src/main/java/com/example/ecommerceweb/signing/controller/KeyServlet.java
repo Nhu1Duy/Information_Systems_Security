@@ -1,7 +1,7 @@
-package com.example.ecommerceweb.controller.sign;
+package com.example.ecommerceweb.signing.controller;
 
-import com.example.ecommerceweb.DAO.KeyDAO;
-import com.example.ecommerceweb.model.KeyStore;
+import com.example.ecommerceweb.signing.dao.KeyDAO;
+import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

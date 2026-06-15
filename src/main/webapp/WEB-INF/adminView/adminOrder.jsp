@@ -47,11 +47,9 @@
     .status-completed { background: #d4edda; color: #155724; }
     .status-cancelled { background: #f8d7da; color: #721c24; }
 
-    .sig-VERIFIED { background: #d4edda; color: #155724; }
-    .sig-TAMPERED { background: #f8d7da; color: #721c24; }
-    .sig-REJECTED { background: #f8d7da; color: #721c24; }
-    .sig-SIGNED   { background: #cce5ff; color: #004085; }
-    .sig-UNSIGNED { background: #e2e3e5; color: #383d41; }
+    .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
+    .sig-SIGNED   { background:#d4edda; color:#155724; }
+    .sig-MISMATCH { background:#f8d7da; color:#721c24; }
 
     .btn-delete {
       background: #f44336;
@@ -110,24 +108,16 @@
     <h1>Quản lý Đơn hàng</h1>
   </div>
 
-  <%-- Alert verify kết quả — nằm trong main, trên bảng --%>
   <c:if test="${not empty param.verifyResult}">
     <c:choose>
-      <c:when test="${param.verifyResult == 'VERIFIED'}">
-        <div class="alert-success">
-          ✅ Đơn hàng #${param.orderId} — Chữ ký hợp lệ, dữ liệu nguyên vẹn.
-        </div>
+      <c:when test="${param.verifyResult == 'SIGNED'}">
+        <div class="alert-success">✅ Đơn hàng #${param.orderId} — Đã ký, chữ ký hợp lệ.</div>
+      </c:when>
+      <c:when test="${param.verifyResult == 'MISMATCH'}">
+        <div class="alert-danger">⚠️ Đơn hàng #${param.orderId} — Dữ liệu không đồng bộ (chữ ký không khớp hoặc khóa không hợp lệ)!</div>
       </c:when>
       <c:otherwise>
-        <div class="alert-danger">
-          ⚠️ CẢNH BÁO: Đơn hàng #${param.orderId} —
-          <c:choose>
-            <c:when test="${param.verifyResult == 'TAMPERED'}">Dữ liệu đã bị thay đổi trái phép!</c:when>
-            <c:when test="${param.verifyResult == 'REJECTED'}">Đơn ký sau khi khóa bị thu hồi!</c:when>
-            <c:when test="${param.verifyResult == 'UNSIGNED'}">Đơn hàng chưa được ký!</c:when>
-            <c:otherwise>Xác minh thất bại!</c:otherwise>
-          </c:choose>
-        </div>
+        <div class="alert-danger">⚠️ Đơn hàng #${param.orderId} — Đơn hàng chưa được ký!</div>
       </c:otherwise>
     </c:choose>
   </c:if>
@@ -177,11 +167,10 @@
             </select>
           </form>
 
-            <%-- Nút Verify — chỉ hiện khi đã ký --%>
-          <c:if test="${o.sigStatus == 'SIGNED' or o.sigStatus == 'VERIFIED' or o.sigStatus == 'TAMPERED' or o.sigStatus == 'REJECTED'}">
-            <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
-            <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
-          </c:if>
+              <c:if test="${o.sigStatus != 'UNSIGNED'}">
+                <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
+                <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
+              </c:if>
 
             <%-- Nút Xóa --%>
           <a href="adminOrder?action=delete&id=${o.id}"

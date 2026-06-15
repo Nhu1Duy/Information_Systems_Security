@@ -1,4 +1,4 @@
-package com.example.ecommerceweb.model;
+package com.example.ecommerceweb.signing.model;
 
 import java.time.LocalDateTime;
 

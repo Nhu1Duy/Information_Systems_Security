@@ -73,11 +73,9 @@
             font-size: 13px;
             font-weight: 700;
         }
-        .sig-VERIFIED { background: #d4edda; color: #155724; }
-        .sig-TAMPERED { background: #f8d7da; color: #721c24; }
-        .sig-REJECTED { background: #f8d7da; color: #721c24; }
-        .sig-SIGNED   { background: #cce5ff; color: #004085; }
-        .sig-UNSIGNED { background: #e2e3e5; color: #383d41; }
+        .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
+        .sig-SIGNED   { background:#d4edda; color:#155724; }
+        .sig-MISMATCH { background:#f8d7da; color:#721c24; }
         .no-data { color: #9ca3af; font-style: italic; font-size: 13px; }
     </style>
 </head>
