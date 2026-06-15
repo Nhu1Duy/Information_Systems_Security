@@ -1,23 +1,29 @@
 package com.example.ecommerceweb.signing.util;
 
 import com.example.ecommerceweb.signing.model.KeyStore;
-import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
 
+import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.PublicKey;
-import java.security.Signature;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 /**
- * Xác minh chữ ký số (SHA256withRSA, khóa RSA 2048-bit) cho đơn hàng.
- * Dữ liệu được ký là canonical_json, chữ ký lưu dạng Base64 trong cột signature.
+ * Xác minh chữ ký số cho đơn hàng, tương thích với Tool Ký Số (desktop):
+ *
+ *   1. Băm canonical_json bằng SHA-256 -> chuỗi hex (lowercase).
+ *   2. Chữ ký = RSA "giải mã" (Cipher RSA/ECB/PKCS1Padding, DECRYPT_MODE,
+ *      dùng PUBLIC KEY) của chuỗi Base64 chữ ký -> ra lại chuỗi hex của hash.
+ *   3. So sánh hash tính lại với hash được giải ra từ chữ ký.
+ *
+ * Đây KHÔNG phải chuẩn java.security.Signature (SHA256withRSA), mà là kiểu
+ * "raw RSA" do Tool Ký Số sử dụng: ký = RSA private-key "encrypt" của hex(SHA-256(json)).
  */
 public class SignatureVerifier {
 
-    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+    private static final String RSA_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
 
     public static String verify(Order order, KeyStore key) {
         String signature = order.getSignature();
@@ -37,13 +43,21 @@ public class SignatureVerifier {
         }
 
         try {
-            PublicKey publicKey = parsePublicKey(key.getPublicKey());
-            Signature sig = Signature.getInstance(SIGNATURE_ALGORITHM);
-            sig.initVerify(publicKey);
-            sig.update(canonicalJson.getBytes(StandardCharsets.UTF_8));
-            byte[] sigBytes = Base64.getDecoder().decode(signature.trim());
+            // 1. Băm lại đơn hàng bằng SHA-256 -> hex
+            String expectedHashHex = sha256Hex(canonicalJson);
 
-            return sig.verify(sigBytes) ? SignatureStatus.SIGNED : SignatureStatus.MISMATCH;
+            // 2. Giải mã chữ ký bằng khóa công khai
+            PublicKey publicKey = RsaKeyCodec.decodePublicKey(key.getPublicKey());
+
+            Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
+            cipher.init(Cipher.DECRYPT_MODE, publicKey);
+            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(signature.trim()));
+            String signedHashHex = new String(decryptedBytes, StandardCharsets.UTF_8);
+
+            // 3. So sánh
+            return expectedHashHex.equals(signedHashHex)
+                    ? SignatureStatus.SIGNED
+                    : SignatureStatus.MISMATCH;
 
         } catch (Exception e) {
             return SignatureStatus.MISMATCH;
@@ -51,19 +65,17 @@ public class SignatureVerifier {
     }
 
     /**
-     * Parse public key dạng Base64 (X.509/SubjectPublicKeyInfo),
-     * hỗ trợ cả 2 dạng đang lưu trong key_store:
-     *  - Có header/footer PEM "-----BEGIN/END PUBLIC KEY-----" kèm xuống dòng
-     *  - Base64 thô không có header/footer
+     * Băm chuỗi bằng SHA-256, trả về chuỗi hex viết thường (giống HashFunction.hashString
+     * trong Tool Ký Số).
      */
-    public static PublicKey parsePublicKey(String keyText) throws Exception {
-        String clean = keyText
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s+", "");
+    private static String sha256Hex(String input) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
 
-        byte[] decoded = Base64.getDecoder().decode(clean);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
-        return KeyFactory.getInstance("RSA").generatePublic(spec);
+        StringBuilder sb = new StringBuilder(hashBytes.length * 2);
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

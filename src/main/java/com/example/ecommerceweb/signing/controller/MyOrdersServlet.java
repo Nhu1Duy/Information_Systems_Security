@@ -1,9 +1,9 @@
-package com.example.ecommerceweb.controller;
+package com.example.ecommerceweb.signing.controller;
 
 import com.example.ecommerceweb.signing.dao.KeyDAO;
-import com.example.ecommerceweb.DAO.OrderDAO;
+import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
-import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.model.User;
 import com.example.ecommerceweb.signing.util.SignatureVerifier;
 

@@ -2,6 +2,7 @@ package com.example.ecommerceweb.signing.controller;
 
 import com.example.ecommerceweb.signing.dao.KeyDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
+import com.example.ecommerceweb.signing.util.RsaKeyCodec;
 import com.example.ecommerceweb.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,8 +10,6 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.util.Base64;
 import java.util.List;
 
 @WebServlet("/key")
@@ -42,14 +41,15 @@ public class KeyServlet extends HttpServlet {
 
         if ("generate".equals(action)) {
             try {
-                KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-                gen.initialize(2048);
-                KeyPair pair = gen.generateKeyPair();
+                KeyPair pair = RsaKeyCodec.generateKeyPair();
 
-                String pubB64 = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
+                String pubB64 = RsaKeyCodec.encodePublicKey(pair.getPublic());
 
-                String privB64 = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
+                String privB64 = RsaKeyCodec.encodePrivateKey(pair.getPrivate());
 
+                // Thu hồi mọi khóa ACTIVE cũ trước khi tạo khóa mới để đảm bảo
+                // mỗi user chỉ có duy nhất 1 khóa ACTIVE tại một thời điểm.
+                KeyDAO.revokeAllActiveKeys(user.getId());
                 KeyDAO.insertKey(user.getId(), pubB64);
 
                 resp.setContentType("application/octet-stream");

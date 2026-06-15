@@ -1,9 +1,9 @@
-package com.example.ecommerceweb.controller;
+package com.example.ecommerceweb.signing.controller;
 
 import com.example.ecommerceweb.signing.dao.KeyDAO;
-import com.example.ecommerceweb.DAO.OrderDAO;
+import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
-import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
 import com.example.ecommerceweb.signing.util.SignatureVerifier;
 import jakarta.servlet.ServletException;
@@ -48,7 +48,7 @@ public class AdminOrderServlet extends HttpServlet {
                     request.setAttribute("detailKey", detailKey);
                 }
                 request.setAttribute("detailOrder", detailOrder);
-                request.getRequestDispatcher("WEB-INF/adminView/adminOrderDetail.jsp")
+                request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
                         .forward(request, response);
                 break;
 
@@ -69,7 +69,7 @@ public class AdminOrderServlet extends HttpServlet {
                 }
 
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("WEB-INF/adminView/adminOrder.jsp")
+                request.getRequestDispatcher("WEB-INF/sign/adminOrder.jsp")
                         .forward(request, response);
                 break;
         }

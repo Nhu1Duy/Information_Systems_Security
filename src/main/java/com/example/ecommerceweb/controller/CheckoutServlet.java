@@ -1,14 +1,11 @@
 package com.example.ecommerceweb.controller;
 
-import com.example.ecommerceweb.DAO.OrderDAO;
+import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.model.CartItem;
-import com.example.ecommerceweb.model.Order;
+import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.model.OrderItem;
 import com.example.ecommerceweb.model.User;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
