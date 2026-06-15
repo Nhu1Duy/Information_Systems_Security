@@ -4,7 +4,7 @@ import com.example.ecommerceweb.DAO.KeyDAO;
 import com.example.ecommerceweb.DAO.OrderDAO;
 import com.example.ecommerceweb.model.KeyStore;
 import com.example.ecommerceweb.model.Order;
-
+import com.example.ecommerceweb.util.SignatureVerifier;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -53,6 +53,22 @@ public class AdminOrderServlet extends HttpServlet {
 
             default:
                 List<Order> orders = OrderDAO.getAllOrders();
+
+                for (Order order : orders) {
+                    String signature = order.getSignature();
+                    if (signature == null || signature.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
+                    String result = SignatureVerifier.verify(order, key);
+
+                    if (!result.equals(order.getSigStatus())) {
+                        OrderDAO.updateSigStatus(order.getId(), result);
+                    }
+                    order.setSigStatus(result);
+                }
+
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("WEB-INF/adminView/adminOrder.jsp")
                         .forward(request, response);
@@ -69,8 +85,21 @@ public class AdminOrderServlet extends HttpServlet {
     private void verifyOrder(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int orderId = Integer.parseInt(request.getParameter("id"));
-        OrderDAO.updateSigStatus(orderId, "VERIFIED");
-        OrderDAO.updateStatus(orderId, "COMPLETED");
-        response.sendRedirect("adminOrder?verifyResult=VERIFIED&orderId=" + orderId);
+        Order order = OrderDAO.getOrderById(orderId);
+
+        if (order == null) {
+            response.sendRedirect("adminOrder");
+            return;
+        }
+
+        KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
+        String result = SignatureVerifier.verify(order, key);
+
+        OrderDAO.updateSigStatus(orderId, result);
+        if ("VERIFIED".equals(result)) {
+            OrderDAO.updateStatus(orderId, "COMPLETED");
+        }
+
+        response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);
     }
 }

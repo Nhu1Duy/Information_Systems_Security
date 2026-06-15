@@ -136,4 +136,20 @@ public class OrderDAO {
                     .execute();
         }
     }
+    public static List<Order> getOrdersByUserId(int userId) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle handle = jdbi.open()) {
+            String sql = "SELECT o.id, o.order_date as orderDate, o.total, o.user_id as userId, " +
+                    "u.username as customerName, o.status, " +
+                    "o.canonical_json as canonicalJson, o.signature, " +
+                    "o.sig_status as sigStatus, o.key_id as keyId " +
+                    "FROM orders o JOIN users u ON o.user_id = u.id " +
+                    "WHERE o.user_id = :userId " +
+                    "ORDER BY o.order_date DESC";
+            return handle.createQuery(sql)
+                    .bind("userId", userId)
+                    .mapToBean(Order.class)
+                    .list();
+        }
+    }
 }
