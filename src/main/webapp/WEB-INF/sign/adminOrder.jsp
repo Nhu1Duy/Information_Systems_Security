@@ -161,9 +161,11 @@
             <input type="hidden" name="id" value="${o.id}">
             <select name="status" onchange="this.form.submit()">
               <option value="PENDING"   ${o.status == 'PENDING'   ? 'selected' : ''}>Chờ</option>
-              <option value="SHIPPING"  ${o.status == 'SHIPPING'  ? 'selected' : ''}>Giao</option>
-              <option value="COMPLETED" ${o.status == 'COMPLETED' ? 'selected' : ''}>Xong</option>
               <option value="CANCELLED" ${o.status == 'CANCELLED' ? 'selected' : ''}>Hủy</option>
+              <c:if test="${o.sigStatus == 'SIGNED' }">
+	              <option value="SHIPPING"  ${o.status == 'SHIPPING'  ? 'selected' : ''}>Giao</option>
+	              <option value="COMPLETED" ${o.status == 'COMPLETED' ? 'selected' : ''}>Xong</option>
+              </c:if>
             </select>
           </form>
 

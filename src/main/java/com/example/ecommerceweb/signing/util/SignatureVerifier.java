@@ -26,19 +26,18 @@ public class SignatureVerifier {
     private static final String RSA_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
 
     public static String verify(Order order, KeyStore key) {
+    	// Kiểm tra key nếu không phải 'ACTIVE' thì trả ra 'MISMATCH'
+    	if (key == null || !"ACTIVE".equalsIgnoreCase(key.getStatus())) {
+            return SignatureStatus.MISMATCH;
+        }
+        
         String signature = order.getSignature();
         String canonicalJson = order.getCanonicalJson();
 
-        if (signature == null || signature.trim().isEmpty()) {
+        if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
-        if (canonicalJson == null || canonicalJson.isEmpty()) {
-            return SignatureStatus.MISMATCH;
-        }
-        if (key == null) {
-            return SignatureStatus.MISMATCH;
-        }
-        if (!"ACTIVE".equalsIgnoreCase(key.getStatus())) {
+        if (canonicalJson == null || canonicalJson.isBlank()) {
             return SignatureStatus.MISMATCH;
         }
 

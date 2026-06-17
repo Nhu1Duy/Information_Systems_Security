@@ -74,7 +74,7 @@
                     <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span></td>
                     <td>
                         <c:choose>
-                            <c:when test="${o.sigStatus == 'UNSIGNED'}">
+                            <c:when test="${o.sigStatus != 'SIGNED' && keyDate != null && o.orderDate.time > keyDate.time}">
                                 <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
                             </c:when>
                             <c:otherwise>
