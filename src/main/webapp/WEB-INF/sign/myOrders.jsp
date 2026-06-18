@@ -24,6 +24,7 @@
         .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
         .sig-SIGNED   { background:#d4edda; color:#155724; }
         .sig-MISMATCH { background:#f8d7da; color:#721c24; }
+        .sig-KEY_REVOKED { background: #ffe5d0; color: #cc5500; }
 
         .btn-sign { background:#16a34a; color:#fff; border:none; padding:6px 14px;
             border-radius:4px; font-size:13px; text-decoration:none; white-space:nowrap; }

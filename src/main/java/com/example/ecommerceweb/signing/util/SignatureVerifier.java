@@ -26,9 +26,11 @@ public class SignatureVerifier {
     private static final String RSA_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
 
     public static String verify(Order order, KeyStore key) {
-    	// Kiểm tra key nếu không phải 'ACTIVE' thì trả ra 'MISMATCH'
-    	if (key == null || !"ACTIVE".equalsIgnoreCase(key.getStatus())) {
-            return SignatureStatus.MISMATCH;
+    	// Kiểm tra nếu trạng thái đơn hàng không phải đang giao hoặc hoàn thành và key đã bị thu hồi thì đổi trang thái "KEY_REVOKED"
+    	if (key == null || 
+    			((!order.getStatus().equalsIgnoreCase("COMPLETED") || !order.getStatus().equalsIgnoreCase("SHIPPING")) 
+    					&& !"ACTIVE".equalsIgnoreCase(key.getStatus()))) {
+            return SignatureStatus.KEY_REVOKED;
         }
         
         String signature = order.getSignature();

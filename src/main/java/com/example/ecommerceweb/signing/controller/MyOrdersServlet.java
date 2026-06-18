@@ -31,11 +31,27 @@ public class MyOrdersServlet extends HttpServlet {
 
         int userId = user.getId();
         List<Order> orders = OrderDAO.getOrdersByUserId(userId);
-        KeyStore key = KeyDAO.getActiveKey(userId);
+        String signature, result;
+        KeyStore key;
+        for (Order order : orders) {
+            signature = order.getSignature();
+            if (signature == null || signature.trim().isEmpty()) {
+                continue;
+            }
+
+            key = KeyDAO.getKeyById(order.getKeyId());
+            result = SignatureVerifier.verify(order, key);
+
+            if (!result.equals(order.getSigStatus())) {
+                OrderDAO.updateSigStatus(order.getId(), result);
+            }
+            order.setSigStatus(result);
+        }
       
+        KeyStore lastestKey = KeyDAO.getActiveKey(userId);
         // Vì createdAt trong key là LocalDateTime nên chuyển sang kiểu Date để thực hiện so sánh trong jsp
-        Date lastestKeyDate = key != null ?
-        		Date.from(key.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
+        Date lastestKeyDate = lastestKey != null ?
+        		Date.from(lastestKey.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
         
         req.setAttribute("keyDate", lastestKeyDate);
         req.setAttribute("orders", orders);

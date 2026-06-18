@@ -50,6 +50,7 @@
     .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
     .sig-SIGNED   { background:#d4edda; color:#155724; }
     .sig-MISMATCH { background:#f8d7da; color:#721c24; }
+    .sig-KEY_REVOKED { background: #ffe5d0; color: #cc5500; }
 
     .btn-delete {
       background: #f44336;
@@ -169,7 +170,7 @@
             </select>
           </form>
 
-              <c:if test="${o.sigStatus != 'UNSIGNED'}">
+              <c:if test="${o.sigStatus != 'UNSIGNED' && o.sigStatus != 'KEY_REVOKED'}">
                 <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
                 <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
               </c:if>
