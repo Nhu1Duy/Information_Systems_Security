@@ -54,20 +54,8 @@ public class AdminOrderServlet extends HttpServlet {
 
             default:
                 List<Order> orders = OrderDAO.getAllOrders();
-
-                for (Order order : orders) {
-                    String signature = order.getSignature();
-                    if (signature == null || signature.trim().isEmpty()) {
-                        continue;
-                    }
-                    KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
-                    String result = SignatureVerifier.verify(order, key);
-                    if (!result.equals(order.getSigStatus())) {
-                        OrderDAO.updateSigStatus(order.getId(), result);
-                    }
-                    order.setSigStatus(result);
-                }
-
+                orders = SignatureVerifier.verifyOrders(orders);
+                
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrder.jsp")
                         .forward(request, response);

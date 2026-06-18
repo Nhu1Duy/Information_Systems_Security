@@ -31,22 +31,7 @@ public class MyOrdersServlet extends HttpServlet {
 
         int userId = user.getId();
         List<Order> orders = OrderDAO.getOrdersByUserId(userId);
-        String signature, result;
-        KeyStore key;
-        for (Order order : orders) {
-            signature = order.getSignature();
-            if (signature == null || signature.trim().isEmpty()) {
-                continue;
-            }
-
-            key = KeyDAO.getKeyById(order.getKeyId());
-            result = SignatureVerifier.verify(order, key);
-
-            if (!result.equals(order.getSigStatus())) {
-                OrderDAO.updateSigStatus(order.getId(), result);
-            }
-            order.setSigStatus(result);
-        }
+        orders = SignatureVerifier.verifyOrders(orders);
       
         KeyStore lastestKey = KeyDAO.getActiveKey(userId);
         // Vì createdAt trong key là LocalDateTime nên chuyển sang kiểu Date để thực hiện so sánh trong jsp

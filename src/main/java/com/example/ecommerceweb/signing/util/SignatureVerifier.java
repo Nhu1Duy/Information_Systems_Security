@@ -1,5 +1,7 @@
 package com.example.ecommerceweb.signing.util;
 
+import com.example.ecommerceweb.signing.dao.KeyDAO;
+import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
@@ -9,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * Xác minh chữ ký số cho đơn hàng, tương thích với Tool Ký Số (desktop):
@@ -24,7 +27,31 @@ import java.util.Base64;
 public class SignatureVerifier {
 
     private static final String RSA_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
+    
+    // Verify danh sách đơn hàng và cập nhật trạng thái chữ ký
+    public static List<Order> verifyOrders(List<Order> orders){
+    	 String signature, result;
+         KeyStore key;
+         for (Order order : orders) {
+        	 if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.SIGNED)) continue;
+        	 
+             signature = order.getSignature();
+             if (signature == null || signature.trim().isEmpty()) {
+                 continue;
+             }
 
+             key = KeyDAO.getKeyById(order.getKeyId());
+             result = SignatureVerifier.verify(order, key);
+
+             if (!result.equals(order.getSigStatus())) {
+                 OrderDAO.updateSigStatus(order.getId(), result);
+             }
+             order.setSigStatus(result);
+         }
+         return orders;
+    }
+    
+    // Verify đơn hàng và trả về trạng thái chữ ký
     public static String verify(Order order, KeyStore key) {
     	// Kiểm tra nếu trạng thái đơn hàng không phải đang giao hoặc hoàn thành và key đã bị thu hồi thì đổi trang thái "KEY_REVOKED"
     	if (key == null || 
