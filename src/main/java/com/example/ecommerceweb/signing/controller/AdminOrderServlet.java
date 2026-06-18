@@ -80,7 +80,7 @@ public class AdminOrderServlet extends HttpServlet {
 
         OrderDAO.updateSigStatus(orderId, result);
         if (SignatureStatus.SIGNED.equals(result)) {
-            OrderDAO.updateStatus(orderId, "COMPLETED");
+            OrderDAO.updateStatus(orderId, "SHIPPING");
         }
 
         response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);
