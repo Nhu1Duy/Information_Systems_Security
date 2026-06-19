@@ -169,12 +169,10 @@
               </c:if>
             </select>
           </form>
-
               <c:if test="${o.sigStatus != 'UNSIGNED' && o.sigStatus != 'KEY_REVOKED'}">
                 <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
-                <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
               </c:if>
-
+              <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết chữ ký</a>
             <%-- Nút Xóa --%>
           <a href="adminOrder?action=delete&id=${o.id}"
              class="btn-delete"

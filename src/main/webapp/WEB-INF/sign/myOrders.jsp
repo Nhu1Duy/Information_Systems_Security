@@ -36,6 +36,18 @@
         .verify-ok   { color:#155724; }
         .verify-bad  { color:#721c24; font-weight:600; }
         .verify-warn { color:#856404; }
+        
+        .btn-verify {
+	      background: #2563eb;
+	      color: #fff;
+	      border: none;
+	      padding: 5px 12px;
+	      border-radius: 4px;
+	      cursor: pointer;
+	      font-size: 13px;
+	      text-decoration: none;
+	      white-space: nowrap;
+	    }
         details > summary { cursor:pointer; color:#2563eb; font-size:13px; }
     </style>
 </head>
@@ -74,28 +86,15 @@
                     <td><span class="status-badge status-${o.status.toLowerCase()}">${o.status}</span></td>
                     <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span></td>
                     <td>
-                        <c:choose>
-                            <c:when test="${o.sigStatus != 'SIGNED' && keyDate != null && o.orderDate.time > keyDate.time}">
-                                <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
-                            </c:when>
-                            <c:otherwise>
-                                <details>
-                                    <summary>Xem chi tiết xác minh</summary>
-                                    <c:choose>
-                                        <c:when test="${o.sigStatus == 'SIGNED'}">
-                                            <p class="verify-msg verify-ok">✅ Đã ký — chữ ký hợp lệ, dữ liệu nguyên vẹn.</p>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <p class="verify-msg verify-bad">⚠️ Dữ liệu không đồng bộ — chữ ký không khớp dữ liệu hiện tại hoặc khóa ký không còn hợp lệ.</p>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <div style="font-size:12px; color:#6b7280; margin-top:6px;">Canonical JSON</div>
-                                    <div class="detail-box">${o.canonicalJson}</div>
-                                    <div style="font-size:12px; color:#6b7280; margin-top:6px;">Chữ ký (Base64)</div>
-                                    <div class="detail-box">${o.signature}</div>
-                                </details>
-                            </c:otherwise>
-                        </c:choose>
+                        <c:if test="${o.sigStatus != 'SIGNED' && not empty keyDate  && o.orderDate.time > keyDate.time}">
+                        	<a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
+                        </c:if>
+                        <c:if test="${o.sigStatus != 'UNSIGNED'}">
+                        	<a href="${pageContext.request.contextPath}/myOrders?action=detail&id=${o.id}"
+								class="btn-verify" style="background:#6366f1;">
+                        		📄 Chi tiết chữ ký
+                        	</a>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>

@@ -11,6 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/adminOrder")
@@ -41,11 +43,17 @@ public class AdminOrderServlet extends HttpServlet {
                 break;
 
             case "detail":
-                int detailId = Integer.parseInt(request.getParameter("id"));
+            	int detailId = Integer.parseInt(request.getParameter("id"));
                 Order detailOrder = OrderDAO.getOrderById(detailId);
+                KeyStore detailKey = null;
                 if (detailOrder != null && detailOrder.getKeyId() > 0) {
-                    KeyStore detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
+                	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
                     request.setAttribute("detailKey", detailKey);
+                }
+                if(detailKey != null) {
+                    Date revokedKeyDate = detailKey.getRevokedAt() != null ? 
+                    		Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
+                    request.setAttribute("revokedDate", revokedKeyDate);
                 }
                 request.setAttribute("detailOrder", detailOrder);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
