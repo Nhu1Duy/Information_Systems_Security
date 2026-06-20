@@ -74,6 +74,11 @@ public class SignatureVerifier {
             // 1. Băm lại đơn hàng bằng SHA-256 -> hex
             String expectedHashHex = sha256Hex(canonicalJson);
 
+            //debug
+            System.out.println("[WEB] canonicalJson  = " + canonicalJson);
+            System.out.println("[WEB] expectedHash   = " + expectedHashHex);
+            System.out.println("[WEB] expectedHash.len = " + expectedHashHex.length());
+
             // 2. Giải mã chữ ký bằng khóa công khai
             PublicKey publicKey = RsaKeyCodec.decodePublicKey(key.getPublicKey());
 
@@ -81,13 +86,20 @@ public class SignatureVerifier {
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(signature.trim()));
             String signedHashHex = new String(decryptedBytes, StandardCharsets.UTF_8);
-
+            //debug
+            System.out.println("[WEB] signedHashHex  = " + signedHashHex);
+            System.out.println("[WEB] signedHash.len = " + signedHashHex.length());
+            System.out.println("[WEB] match = " + expectedHashHex.equals(signedHashHex));
+            System.out.println("----------------" );
             // 3. So sánh
             return expectedHashHex.equals(signedHashHex)
                     ? SignatureStatus.SIGNED
                     : SignatureStatus.MISMATCH;
 
+
         } catch (Exception e) {
+            System.out.println("[WEB] EXCEPTION: " + e.getClass().getName() + " - " + e.getMessage());
+            e.printStackTrace();
             return SignatureStatus.MISMATCH;
         }
     }
