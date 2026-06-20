@@ -11,7 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import java.io.IOException;
+import java.io.IOException;import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/myOrders")
@@ -26,26 +28,49 @@ public class MyOrdersServlet extends HttpServlet {
             resp.sendRedirect("login");
             return;
         }
+        String action = req.getParameter("action");
+        if (action == null) action = "list";
 
-        List<Order> orders = OrderDAO.getOrdersByUserId(user.getId());
+        switch (action) {       
+            case "detail":
+                int detailId = Integer.parseInt(req.getParameter("id"));
+                Order detailOrder = OrderDAO.getOrderById(detailId);
+                KeyStore detailKey = null;
+                if (detailOrder != null && detailOrder.getKeyId() > 0) {
+                	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
+                    req.setAttribute("detailKey", detailKey);
+                }
+                if(detailKey != null) {
+                    Date revokedKeyDate = detailKey.getRevokedAt() != null ? 
+                    		Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
+                    req.setAttribute("revokedDate", revokedKeyDate);
+                }
+                req.setAttribute("detailOrder", detailOrder);
+                req.getRequestDispatcher("WEB-INF/sign/myOrderDetail.jsp")
+                        .forward(req, resp);
+                break;
 
-        for (Order order : orders) {
-            String signature = order.getSignature();
-            if (signature == null || signature.trim().isEmpty()) {
-                continue;
-            }
-
-            KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
-            String result = SignatureVerifier.verify(order, key);
-
-            if (!result.equals(order.getSigStatus())) {
-                OrderDAO.updateSigStatus(order.getId(), result);
-            }
-            order.setSigStatus(result);
+            default:
+            	int userId = user.getId();
+                List<Order> orders = OrderDAO.getOrdersByUserId(userId);
+                orders = SignatureVerifier.verifyOrders(orders);
+              
+                KeyStore lastestKey = KeyDAO.getActiveKey(userId);
+                // Vì createdAt trong key là LocalDateTime nên chuyển sang kiểu Date để thực hiện so sánh trong jsp
+                Date lastestKeyDate = lastestKey != null ?
+                		Date.from(lastestKey.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
+                
+                req.setAttribute("keyDate", lastestKeyDate);
+                req.setAttribute("orders", orders);
+                req.setAttribute("currentPage", "myOrders");
+                req.getRequestDispatcher("/WEB-INF/sign/myOrders.jsp").forward(req, resp);
+                break;
         }
-
-        req.setAttribute("orders", orders);
-        req.setAttribute("currentPage", "myOrders");
-        req.getRequestDispatcher("/WEB-INF/sign/myOrders.jsp").forward(req, resp);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+    	doGet(req, resp);    
     }
 }
