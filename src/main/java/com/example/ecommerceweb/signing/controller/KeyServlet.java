@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.List;
 
 @WebServlet("/key")
@@ -51,6 +52,8 @@ public class KeyServlet extends HttpServlet {
 
         if ("generate".equals(action)) {
             generateKey(user, session, resp);
+        } else if ("use-own-public-key".equals(action)) {
+            useOwnPublicKey(req, user, session, resp);
         } else if ("revoke".equals(action)) {
             revokeKey(user, session, resp);
         } else if ("download-generated-key".equals(action)) {
@@ -88,6 +91,36 @@ public class KeyServlet extends HttpServlet {
             resp.sendRedirect("key");
         } catch (Exception e) {
             session.setAttribute("keyMessage", "Lỗi tạo khóa: " + e.getMessage());
+            resp.sendRedirect("key");
+        }
+    }
+
+    private void useOwnPublicKey(HttpServletRequest req, User user, HttpSession session, HttpServletResponse resp) throws IOException {
+        try {
+            // Phan code cua toi: khong cho ghi de khoa ACTIVE khi nguoi dung chua bao mat/thu hoi khoa cu.
+            KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
+            if (activeKey != null) {
+                session.setAttribute("keyMessage", "Ban can bao mat/thu hoi khoa hien tai truoc khi dung public key moi.");
+                resp.sendRedirect("key");
+                return;
+            }
+
+            String publicKeyText = req.getParameter("ownPublicKey");
+            if (publicKeyText == null || publicKeyText.isBlank()) {
+                session.setAttribute("keyMessage", "Hay nhap public key cua ban.");
+                resp.sendRedirect("key");
+                return;
+            }
+
+            // Phan code cua toi: decode de xac thuc public key dung dinh dang RSA X.509, sau do luu lai dang Base64 chuan.
+            PublicKey publicKey = RsaKeyCodec.decodePublicKey(publicKeyText);
+            String normalizedPublicKey = RsaKeyCodec.encodePublicKey(publicKey);
+            KeyDAO.insertKey(user.getId(), normalizedPublicKey);
+
+            session.setAttribute("keyMessage", "Da luu public key cua ban. Tu bay gio he thong se dung public key nay de xac minh chu ky.");
+            resp.sendRedirect("key");
+        } catch (Exception e) {
+            session.setAttribute("keyMessage", "Public key khong hop le. Hay kiem tra lai dinh dang RSA public key.");
             resp.sendRedirect("key");
         }
     }
