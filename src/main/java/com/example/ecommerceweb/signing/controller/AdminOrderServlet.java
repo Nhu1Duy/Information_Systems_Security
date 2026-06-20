@@ -11,6 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/adminOrder")
@@ -41,11 +43,17 @@ public class AdminOrderServlet extends HttpServlet {
                 break;
 
             case "detail":
-                int detailId = Integer.parseInt(request.getParameter("id"));
+            	int detailId = Integer.parseInt(request.getParameter("id"));
                 Order detailOrder = OrderDAO.getOrderById(detailId);
+                KeyStore detailKey = null;
                 if (detailOrder != null && detailOrder.getKeyId() > 0) {
-                    KeyStore detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
+                	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
                     request.setAttribute("detailKey", detailKey);
+                }
+                if(detailKey != null) {
+                    Date revokedKeyDate = detailKey.getRevokedAt() != null ? 
+                    		Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
+                    request.setAttribute("revokedDate", revokedKeyDate);
                 }
                 request.setAttribute("detailOrder", detailOrder);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
@@ -54,20 +62,8 @@ public class AdminOrderServlet extends HttpServlet {
 
             default:
                 List<Order> orders = OrderDAO.getAllOrders();
-
-                for (Order order : orders) {
-                    String signature = order.getSignature();
-                    if (signature == null || signature.trim().isEmpty()) {
-                        continue;
-                    }
-                    KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
-                    String result = SignatureVerifier.verify(order, key);
-                    if (!result.equals(order.getSigStatus())) {
-                        OrderDAO.updateSigStatus(order.getId(), result);
-                    }
-                    order.setSigStatus(result);
-                }
-
+                orders = SignatureVerifier.verifyOrders(orders);
+                
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrder.jsp")
                         .forward(request, response);
@@ -92,7 +88,7 @@ public class AdminOrderServlet extends HttpServlet {
 
         OrderDAO.updateSigStatus(orderId, result);
         if (SignatureStatus.SIGNED.equals(result)) {
-            OrderDAO.updateStatus(orderId, "COMPLETED");
+            OrderDAO.updateStatus(orderId, "SHIPPING");
         }
 
         response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);

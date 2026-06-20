@@ -50,6 +50,7 @@
     .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
     .sig-SIGNED   { background:#d4edda; color:#155724; }
     .sig-MISMATCH { background:#f8d7da; color:#721c24; }
+    .sig-KEY_REVOKED { background: #ffe5d0; color: #cc5500; }
 
     .btn-delete {
       background: #f44336;
@@ -161,17 +162,17 @@
             <input type="hidden" name="id" value="${o.id}">
             <select name="status" onchange="this.form.submit()">
               <option value="PENDING"   ${o.status == 'PENDING'   ? 'selected' : ''}>Chờ</option>
-              <option value="SHIPPING"  ${o.status == 'SHIPPING'  ? 'selected' : ''}>Giao</option>
-              <option value="COMPLETED" ${o.status == 'COMPLETED' ? 'selected' : ''}>Xong</option>
               <option value="CANCELLED" ${o.status == 'CANCELLED' ? 'selected' : ''}>Hủy</option>
+              <c:if test="${o.sigStatus == 'SIGNED' }">
+	              <option value="SHIPPING"  ${o.status == 'SHIPPING'  ? 'selected' : ''}>Giao</option>
+	              <option value="COMPLETED" ${o.status == 'COMPLETED' ? 'selected' : ''}>Xong</option>
+              </c:if>
             </select>
           </form>
-
-              <c:if test="${o.sigStatus != 'UNSIGNED'}">
+              <c:if test="${o.sigStatus != 'UNSIGNED' && o.sigStatus != 'KEY_REVOKED'}">
                 <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
-                <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết</a>
               </c:if>
-
+              <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết chữ ký</a>
             <%-- Nút Xóa --%>
           <a href="adminOrder?action=delete&id=${o.id}"
              class="btn-delete"
