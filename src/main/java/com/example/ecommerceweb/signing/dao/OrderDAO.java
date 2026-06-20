@@ -3,6 +3,7 @@ package com.example.ecommerceweb.signing.dao;
 import com.example.ecommerceweb.infor.JdbiConnector;
 import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.model.OrderItem;
+import com.example.ecommerceweb.signing.model.OrderStatus;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.PreparedBatch;
@@ -108,11 +109,11 @@ public class OrderDAO {
         }
     }
 
-    public static void updateStatus(int id, String status) {
+    public static void updateStatus(int id, OrderStatus status) {
         Jdbi jdbi = JdbiConnector.get();
         try (Handle handle = jdbi.open()) {
             handle.createUpdate("UPDATE orders SET status = :status WHERE id = :id")
-                    .bind("status", status)
+                    .bind("status", status.name())
                     .bind("id", id)
                     .execute();
         }

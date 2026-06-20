@@ -4,6 +4,7 @@ import com.example.ecommerceweb.signing.dao.KeyDAO;
 import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.signing.model.Order;
+import com.example.ecommerceweb.signing.model.OrderStatus;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
 
 import javax.crypto.Cipher;
@@ -54,9 +55,9 @@ public class SignatureVerifier {
     // Verify đơn hàng và trả về trạng thái chữ ký
     public static String verify(Order order, KeyStore key) {
     	// Kiểm tra nếu trạng thái đơn hàng không phải đang giao hoặc hoàn thành và key đã bị thu hồi thì đổi trang thái "KEY_REVOKED"
-    	if (key == null || 
-    			((!order.getStatus().equalsIgnoreCase("COMPLETED") || !order.getStatus().equalsIgnoreCase("SHIPPING")) 
-    					&& !"ACTIVE".equalsIgnoreCase(key.getStatus()))) {
+        if (key == null ||
+                (order.getStatus() != OrderStatus.COMPLETED && order.getStatus() != OrderStatus.SHIPPING
+                        && !"ACTIVE".equalsIgnoreCase(key.getStatus()))) {
             return SignatureStatus.KEY_REVOKED;
         }
         

@@ -8,7 +8,7 @@ public class Order {
     private double total;
     private int userId;
     private String customerName;
-    private String status;
+    private OrderStatus status;
     private String canonicalJson;
     private String signature;
     private String sigStatus;
@@ -36,8 +36,8 @@ public class Order {
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 
     public String getCanonicalJson() { return canonicalJson; }
     public void setCanonicalJson(String canonicalJson) { this.canonicalJson = canonicalJson; }
@@ -50,4 +50,14 @@ public class Order {
 
     public int getKeyId() { return keyId; }
     public void setKeyId(int keyId) { this.keyId = keyId; }
+
+    public String getSigStatusLabel() {
+        if (sigStatus == null) return "CHƯA KÝ";
+        switch (sigStatus) {
+            case "SIGNED":      return "ĐÃ KÝ";
+            case "MISMATCH":    return "KHÔNG KHỚP";
+            case "KEY_REVOKED": return "KHÓA BỊ THU HỒI";
+            default:            return "CHƯA KÝ";
+        }
+    }
 }

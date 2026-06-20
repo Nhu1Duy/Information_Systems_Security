@@ -149,7 +149,7 @@
           </strong>
         </td>
         <td>
-          <span class="status-badge status-${o.status.toLowerCase()}">${o.status}</span>
+          <span class="status-badge status-${o.status.name().toLowerCase()}">${o.status.label}</span>
         </td>
         <td>
           <span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span>
@@ -161,16 +161,17 @@
             <input type="hidden" name="action" value="updateStatus">
             <input type="hidden" name="id" value="${o.id}">
             <select name="status" onchange="this.form.submit()">
-              <option value="PENDING"   ${o.status == 'PENDING'   ? 'selected' : ''}>Chờ</option>
-              <option value="CANCELLED" ${o.status == 'CANCELLED' ? 'selected' : ''}>Hủy</option>
-              <c:if test="${o.sigStatus == 'SIGNED' }">
-	              <option value="SHIPPING"  ${o.status == 'SHIPPING'  ? 'selected' : ''}>Giao</option>
-	              <option value="COMPLETED" ${o.status == 'COMPLETED' ? 'selected' : ''}>Xong</option>
+              <option value="PENDING"   ${o.status.name() == 'PENDING'   ? 'selected' : ''}>Chờ xác nhận</option>
+              <option value="CONFIRMED" ${o.status.name() == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
+              <option value="CANCELLED" ${o.status.name() == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+              <c:if test="${o.sigStatus == 'SIGNED'}">
+                <option value="SHIPPING"  ${o.status.name() == 'SHIPPING'  ? 'selected' : ''}>Đang giao</option>
+                <option value="COMPLETED" ${o.status.name() == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
               </c:if>
             </select>
           </form>
               <c:if test="${o.sigStatus != 'UNSIGNED' && o.sigStatus != 'KEY_REVOKED'}">
-                <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Verify</a>
+                <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Xác nhận chữ kí</a>
               </c:if>
               <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết chữ ký</a>
             <%-- Nút Xóa --%>
