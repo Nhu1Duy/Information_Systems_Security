@@ -83,17 +83,17 @@
                             <fmt:formatNumber value="${o.total}" type="currency" currencySymbol="VND" maxFractionDigits="0"/>
                         </strong>
                     </td>
-                    <td><span class="status-badge status-${o.status.toLowerCase()}">${o.status}</span></td>
+                    <td><span class="status-badge status-${o.status.name().toLowerCase()}">${o.status.label}</span></td>
                     <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span></td>
                     <td>
-                        <c:if test="${o.sigStatus != 'SIGNED' && not empty keyDate  && o.orderDate.time > keyDate.time}">
-                        	<a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
+                        <c:if test="${o.sigStatus != 'SIGNED' && not empty keyDate && o.orderDate.time > keyDate.time}">
+                            <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
                         </c:if>
                         <c:if test="${o.sigStatus != 'UNSIGNED'}">
-                        	<a href="${pageContext.request.contextPath}/myOrders?action=detail&id=${o.id}"
-								class="btn-verify" style="background:#6366f1;">
-                        		📄 Chi tiết chữ ký
-                        	</a>
+                            <a href="${pageContext.request.contextPath}/myOrders?action=detail&id=${o.id}"
+                               class="btn-verify" style="background:#6366f1;">
+                                📄 Chi tiết chữ ký
+                            </a>
                         </c:if>
                     </td>
                 </tr>

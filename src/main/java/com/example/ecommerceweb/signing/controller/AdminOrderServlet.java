@@ -4,6 +4,7 @@ import com.example.ecommerceweb.signing.dao.KeyDAO;
 import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.signing.model.Order;
+import com.example.ecommerceweb.signing.model.OrderStatus;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
 import com.example.ecommerceweb.signing.util.SignatureVerifier;
 import jakarta.servlet.ServletException;
@@ -27,7 +28,7 @@ public class AdminOrderServlet extends HttpServlet {
         switch (action) {
             case "updateStatus":
                 int idUpdate = Integer.parseInt(request.getParameter("id"));
-                String newStatus = request.getParameter("status");
+                OrderStatus newStatus = OrderStatus.fromDbValue(request.getParameter("status"));
                 OrderDAO.updateStatus(idUpdate, newStatus);
                 response.sendRedirect("adminOrder");
                 break;
@@ -88,9 +89,19 @@ public class AdminOrderServlet extends HttpServlet {
 
         OrderDAO.updateSigStatus(orderId, result);
         if (SignatureStatus.SIGNED.equals(result)) {
-            OrderDAO.updateStatus(orderId, "SHIPPING");
+            OrderDAO.updateStatus(orderId, OrderStatus.SHIPPING);
         }
 
-        response.sendRedirect("adminOrder?verifyResult=" + result + "&orderId=" + orderId);
+        String resultKey;
+        if (SignatureStatus.SIGNED.equals(result)) {
+            resultKey = "SIGNED";
+        } else if (SignatureStatus.MISMATCH.equals(result)) {
+            resultKey = "MISMATCH";
+        } else if (SignatureStatus.KEY_REVOKED.equals(result)) {
+            resultKey = "KEY_REVOKED";
+        } else {
+            resultKey = "UNSIGNED";
+        }
+        response.sendRedirect("adminOrder?verifyResult=" + resultKey + "&orderId=" + orderId);
     }
 }
