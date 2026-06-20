@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -19,11 +18,31 @@
             border-radius:6px; cursor:pointer; font-size:14px; }
         .btn-primary { background:#16a34a; color:#fff; border:none; padding:10px 20px;
             border-radius:6px; cursor:pointer; font-size:14px; }
+        .btn-secondary { background:#374151; color:#fff; border:none; padding:10px 20px;
+            border-radius:6px; cursor:pointer; font-size:14px; }
+        .btn-muted { background:#e5e7eb; color:#374151; border:none; padding:10px 20px;
+            border-radius:6px; cursor:not-allowed; font-size:14px; }
         .alert-warn { background:#fff3cd; border:1px solid #ffc107;
             padding:1rem; border-radius:6px; margin-bottom:1rem; }
         .history-table { width:100%; border-collapse:collapse; margin-top:1rem; }
         .history-table th, .history-table td { padding:10px; border:1px solid #ddd; font-size:13px; }
         .history-table th { background:#16a34a; color:#fff; }
+        .key-choice-overlay { position:fixed; inset:0; background:rgba(17,24,39,0.55);
+            display:flex; align-items:center; justify-content:center; padding:1rem; z-index:999; }
+        .key-choice-dialog { background:#fff; border-radius:8px; width:min(620px, 100%);
+            padding:1.5rem; box-shadow:0 20px 40px rgba(0,0,0,0.25); }
+        .key-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+        .key-choice-box { border:1px solid #ddd; border-radius:8px; padding:1rem; }
+        .key-choice-box h3 { margin-top:0; font-size:18px; }
+        .gmail-row { display:flex; gap:8px; margin-top:10px; }
+        .gmail-row input { flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; }
+        .key-choice-error { color:#dc2626; font-size:13px; margin-top:8px; min-height:18px; }
+        .key-choice-actions { display:flex; justify-content:flex-end; margin-top:1.25rem; }
+        .private-key-source { display:none; }
+        @media (max-width: 680px) {
+            .key-choice-grid { grid-template-columns:1fr; }
+            .gmail-row { flex-direction:column; }
+        }
     </style>
 </head>
 <body>
@@ -60,10 +79,19 @@
     <div class="key-card">
         <h2>Tạo khóa mới</h2>
         <p style="color:#555;">File Private Key sẽ tự động tải về máy. <strong>Lưu giữ cẩn thận — không chia sẻ với ai.</strong></p>
-        <form action="key" method="POST">
-            <input type="hidden" name="action" value="generate"/>
-            <button type="submit" class="btn-primary">🔑 Tạo cặp khóa RSA 2048-bit</button>
-        </form>
+        <c:choose>
+            <c:when test="${activeKey != null}">
+                <p style="color:#555;">Bạn cần báo mất/thu hồi khóa hiện tại trước khi tạo khóa mới.</p>
+                <button type="button" class="btn-muted" disabled>🔑 Cặp khóa RSA 2048-bit của bạn đang còn hoạt động</button>
+            </c:when>
+            <c:otherwise>
+                <p style="color:#555;">Sau khi tạo khóa hãy chọn cách thức lưu khóa.</p>
+                <form action="key" method="POST">
+                    <input type="hidden" name="action" value="generate"/>
+                    <button type="submit" class="btn-primary">🔑 Tạo cặp khóa RSA 2048-bit</button>
+                </form>
+            </c:otherwise>
+        </c:choose>
     </div>
 
     <!-- Lịch sử khóa -->
@@ -86,13 +114,75 @@
                         </c:choose>
                     </td>
                     <td>${k.createdAt}</td>
-                    <td>${k.revokedAt != null ? k.revokedAt : '—'}</td>
+                    <td>${k.revokedAt != null ? k.revokedAt : '-'}</td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
     </div>
 </main>
+
+<c:if test="${not empty generatedPrivateKey}">
+    <!--chọn cách thức lưu khóa-->
+    <div class="key-choice-overlay" role="dialog" aria-modal="true" aria-labelledby="keyChoiceTitle">
+        <div class="key-choice-dialog">
+            <h2 id="keyChoiceTitle">Chọn cách lưu private key</h2>
+            <p>Hãy lưu private key bằng các cách thức sau.</p>
+
+            <div class="key-choice-grid">
+                <div class="key-choice-box">
+                    <h3>Lưu file khóa</h3>
+                    <p>Tải private key về máy</p>
+                    <form action="key" method="POST">
+                        <input type="hidden" name="action" value="download-generated-key"/>
+                        <button type="submit" class="btn-primary">Lưu file khóa</button>
+                    </form>
+                </div>
+
+                <div class="key-choice-box">
+                    <h3>Gửi mail</h3>
+                    <p>Nhập địa chỉ Gmail để nhận private key.</p>
+                    <div class="gmail-row">
+                        <input id="gmailAddress" type="email" placeholder="ten@gmail.com" autocomplete="email"/>
+                        <button type="button" class="btn-secondary" onclick="openGmailDraft()">Gửi mail</button>
+                    </div>
+                    <div id="gmailError" class="key-choice-error"></div>
+                </div>
+            </div>
+
+            <form action="key" method="POST" class="key-choice-actions">
+                <input type="hidden" name="action" value="clear-generated-key"/>
+                <button type="submit" class="btn-secondary">Đóng</button>
+            </form>
+
+            <textarea id="privateKeyValue" class="private-key-source"><c:out value="${generatedPrivateKey}"/></textarea>
+            <input id="privateKeyFileName" type="hidden" value="<c:out value='${generatedPrivateKeyFileName}'/>"/>
+        </div>
+    </div>
+</c:if>
+
+<script>
+    function openGmailDraft() {
+        //trang gửi mail mới để gửi mail
+        const gmailInput = document.getElementById('gmailAddress');
+        const errorBox = document.getElementById('gmailError');
+        const email = gmailInput.value.trim();
+
+        if (!/^[^\s@]+@gmail\.com$/i.test(email)) {
+            errorBox.textContent = 'Hãy nhập địa chỉ gmail hợp lệ.';
+            return;
+        }
+
+        const privateKey = document.getElementById('privateKeyValue').textContent;
+        const fileName = document.getElementById('privateKeyFileName').value || 'private_key.pem';
+        const subject = 'Private key ' + fileName;
+        const body = 'Private key cua ban:\n\n' + privateKey;
+        const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1' + '&to=' + encodeURIComponent(email) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+        errorBox.textContent = '';
+        window.open(gmailUrl, '_blank', 'noopener');
+    }
+</script>
 <jsp:include page="/WEB-INF/layout/footer.jsp"/>
 </body>
 </html>
