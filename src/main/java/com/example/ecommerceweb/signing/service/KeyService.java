@@ -38,7 +38,7 @@ public class KeyService {
         }
 
         KeyPair pair = RsaKeyCodec.generateKeyPair();
-        String pubB64  = RsaKeyCodec.encodePublicKey(pair.getPublic());
+        String pubB64 = RsaKeyCodec.encodePublicKey(pair.getPublic());
         String privB64 = RsaKeyCodec.encodePrivateKey(pair.getPrivate());
 
         KeyDAO.insertKey(userId, pubB64);
@@ -54,7 +54,7 @@ public class KeyService {
             throw new IllegalArgumentException("Hãy nhập public key của bạn.");
         }
         if (KeyDAO.getActiveKey(userId) != null) {
-            throw new IllegalStateException( "Bạn cần báo mất/thu hồi khóa hiện tại trước khi dùng public key mới.");
+            throw new IllegalStateException("Bạn cần báo mất/thu hồi khóa hiện tại trước khi dùng public key mới.");
         }
 
         PublicKey publicKey = RsaKeyCodec.decodePublicKey(publicKeyText);

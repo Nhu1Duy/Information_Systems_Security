@@ -62,8 +62,8 @@ public class OrderService {
             OrderDAO.updateStatus(orderId, OrderStatus.SHIPPING);
         }
 
-        if (SignatureStatus.SIGNED.equals(result))      return "SIGNED";
-        if (SignatureStatus.MISMATCH.equals(result))    return "MISMATCH";
+        if (SignatureStatus.SIGNED.equals(result)) return "SIGNED";
+        if (SignatureStatus.MISMATCH.equals(result)) return "MISMATCH";
         if (SignatureStatus.KEY_REVOKED.equals(result)) return "KEY_REVOKED";
         return "UNSIGNED";
     }
