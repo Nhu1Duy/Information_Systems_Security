@@ -5,6 +5,8 @@ import com.example.ecommerceweb.signing.dao.OrderDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.model.User;
+import com.example.ecommerceweb.signing.service.KeyService;
+import com.example.ecommerceweb.signing.service.OrderService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -13,23 +15,27 @@ import java.io.IOException;
 
 @WebServlet("/sign-order")
 public class SignOrderServlet extends HttpServlet {
+    private OrderService orderService = new OrderService();
+    private KeyService keyService = new KeyService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) { resp.sendRedirect("login"); return; }
+        if (user == null) {
+            resp.sendRedirect("login");
+            return;
+        }
 
         int orderId = Integer.parseInt(req.getParameter("orderId"));
-        Order order = OrderDAO.getOrderById(orderId);
-
-        if (order == null || order.getUserId() != user.getId()) {
+        Order order = orderService.getOrderForUser(orderId, user.getId());
+        if (order == null) {
             resp.sendRedirect("order-success");
             return;
         }
 
-        KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
+        KeyStore activeKey = keyService.getActiveKey(user.getId());
         req.setAttribute("order", order);
         req.setAttribute("activeKey", activeKey);
         req.getRequestDispatcher("/WEB-INF/sign/sign-order.jsp").forward(req, resp);
@@ -40,25 +46,22 @@ public class SignOrderServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) { resp.sendRedirect("login"); return; }
+        if (user == null) {
+            resp.sendRedirect("login");
+            return;
+        }
 
-        int orderId      = Integer.parseInt(req.getParameter("orderId"));
+        int orderId = Integer.parseInt(req.getParameter("orderId"));
         String signature = req.getParameter("signature");
 
-        Order order = OrderDAO.getOrderById(orderId);
-        if (order == null || order.getUserId() != user.getId()) {
+        try {
+            orderService.signOrder(orderId, user.getId(), signature);
             resp.sendRedirect("order-success");
-            return;
-        }
-
-        KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
-        if (activeKey == null) {
-            session.setAttribute("keyMessage", "Bạn chưa có khóa. Vui lòng tạo khóa trước.");
+        } catch (IllegalStateException e) {
+            session.setAttribute("keyMessage", e.getMessage());
             resp.sendRedirect("key");
-            return;
+        } catch (IllegalArgumentException e) {
+            resp.sendRedirect("order-success");
         }
-
-        OrderDAO.saveSignature(orderId, order.getCanonicalJson(), signature, activeKey.getId());
-        resp.sendRedirect("order-success");
     }
 }

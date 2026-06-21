@@ -11,7 +11,7 @@
  Target Server Version : 100432 (10.4.32-MariaDB)
  File Encoding         : 65001
 
- Date: 16/06/2026 01:20:11
+ Date: 20/06/2026 12:45:39
 */
 
 SET NAMES utf8mb4;
@@ -50,7 +50,7 @@ CREATE TABLE `key_store`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_key_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_key_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of key_store
@@ -63,7 +63,11 @@ INSERT INTO `key_store` VALUES (6, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCA
 INSERT INTO `key_store` VALUES (7, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5L+CAdkD3/be/DSPfpAaLyBbmyLY78TvKrizJcYZT0Nrx5hbEKRLvgBFtJ043SbZSXKwJHANhW8N/aKYIXOarwd56BUxw4Iu2H4YOuzzlOTh69KOjWvgFsruAUFIGN7UkPAxG8Hu+hvUzuePDVWXLRfNjuUtDThWirTxGqcYINhigYLtLDzrp5Cbvf7FqUB2zDd01wwANDuN+rZtnDNI9BJSaIfvamRPgeu+lQVW9nKxAtpTbSyowOQ4BPE1ilW+2Ef9MQFcFc8BgatMfc837+J2lE6HYsL19lh0evQ93KAi62G9cEswB9xQ+2tCEQb/bc9Ij+c8OE6QQ3y/PM9fLQIDAQAB', 'REVOKED', '2026-06-13 10:08:50', '2026-06-13 11:58:59');
 INSERT INTO `key_store` VALUES (8, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmLY+JlnaL1joHoEV4q7FhpHUU6dHuw5GqRJLI6FhKI8qm91IUgRyzH9vOR6hxajp1GNQpfbJ8L/7V8c4VHBj/dNOeucgwO6cLeyuBolnAg1IuSJfrb5GZ1KkRBuXMN2dta0dW5h6/OgW0IBdJPVdoxjUgd354IzUanKB1g1yuCXWpxIJtVh8ab+x3wF/HorTvUeag5UKGeW7b6QrsWAAD4CWXBQeW9pH5O3hzAbPV4W95mlI0OkkwWxNDzXgBOx7mfPYq4FNG8Dc6LXEUVmKUeihpzaLAz48GqSymPXbKKv83VzA4tVcJR7010JwJv+ywvORAxhdi0NhQdKO502UMQIDAQAB', 'REVOKED', '2026-06-13 11:59:04', '2026-06-16 00:37:04');
 INSERT INTO `key_store` VALUES (9, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwALvUv1/yJU3UPvBixnC5s/PtFb/ijUb3DBZSrnyYC6B7MDMpqXrIgenMbimMbZ+VpawkvXe9ckaWAMMK+L8V+ihmmrzmkMSpDXzb/NXO9WwYLkko6xftazF+5wB1qFtZRB5TwMGYAUVg29q4rzQDtptAKO1XfB4AfgePazQPDDQeQIc62qEE2FL2vhIYqusk2DZU3CTdRQ+Tek7lFwAzq3tzqIaTP4qkJAc08GeVWhSvPFY1w3TGxXDbj0xR7BVre4YuiNpYV5CN0/mQNoladVplebBE1fqSKs/Vff6sRyCfCUMc4x9scRMbWB1sM7N3eMAcCjXoZ1t16e8UhJ/JwIDAQAB', 'REVOKED', '2026-06-13 12:09:05', '2026-06-16 00:37:04');
-INSERT INTO `key_store` VALUES (10, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuBPpHlP/s6RrbsuEVE8SHwhBJIS15PReVazBVqKu4Wwt4m88ddIafC39wZ/ElFQrAuLohDenfOmMEJ8d/ylTYguXqVztCyV8pQ61qsnpMSkQkWC0+JTDHuk86bjzquVb7qDmuF7Y6kMa+m/azMptoXfpY6LIQ2zyrslhyoqDOaHlyj09rbhjBBBIxJ16ZXVUqJOIBpAzFN38qpCPfhmf+TTEtBXX9kVIS18aPFVb0zlHRBXgs6msn24L8VUmEjjYTiX6Z5Nv5q4XuGzUC2MBJI6AQPTEo4sDwKLiava6ijmNmqzl2K+SB2wdTnG0bQ+wzkXTbEIn1Njq/sjKuHXtAwIDAQAB', 'ACTIVE', '2026-06-16 00:37:06', NULL);
+INSERT INTO `key_store` VALUES (10, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuBPpHlP/s6RrbsuEVE8SHwhBJIS15PReVazBVqKu4Wwt4m88ddIafC39wZ/ElFQrAuLohDenfOmMEJ8d/ylTYguXqVztCyV8pQ61qsnpMSkQkWC0+JTDHuk86bjzquVb7qDmuF7Y6kMa+m/azMptoXfpY6LIQ2zyrslhyoqDOaHlyj09rbhjBBBIxJ16ZXVUqJOIBpAzFN38qpCPfhmf+TTEtBXX9kVIS18aPFVb0zlHRBXgs6msn24L8VUmEjjYTiX6Z5Nv5q4XuGzUC2MBJI6AQPTEo4sDwKLiava6ijmNmqzl2K+SB2wdTnG0bQ+wzkXTbEIn1Njq/sjKuHXtAwIDAQAB', 'REVOKED', '2026-06-16 00:37:06', '2026-06-19 21:37:40');
+INSERT INTO `key_store` VALUES (11, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwfiWgkb3vT1JRepx+kduWbq4xS2C4l6xv6SBrnDuWYFNMYzVY/EYrjg8VlFpgNXTD7JzW+VXrO0mRV9CHkHsa3egYFo2JsKnQAG9fIBRVQ/Nov1XM9pfnnOzf8BVK0fES4BulZeKXzh8ovrMpswN0LhX6DVO4cqklDVIPzpr1vCbDhjcw8+qb/5NOB6nXLRTsw1syC11orm5ohH+CIp59dt3d/jUzUfdR6SU6KwnXNViBX9OmT19obtxfr7YUcumTOqvc0G5s6k6fGfAmczYDMy9z0XB3SoDPK+gQO7E3YiWpslRXEPV+bOjiZ18L7SaDc75cRPWnIOP+coVpvo14wIDAQAB', 'REVOKED', '2026-06-19 21:38:03', '2026-06-19 23:28:25');
+INSERT INTO `key_store` VALUES (12, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqY/p9NdEvhLqx4r7IYIkfxVA9KEhVxf/FQ3UFV3D0PLjzBKyFW2dlrI3+UsvRsG2FPnvBtWfK8eTFoscdVAEGAdH7aIYeqKjClOifQ3xgGpHR8uThhjrFnK2iIcFdA3I00MmgvNzWNq+AzPqsvFb9SH65yanm/qWRFALgUbciTMs1Jh8ObTWvtKxFzspEFTiTiw/8D9qPyn/d4PP73wpgo911cINrvIpf8uxJr3ohKP5H7DHkbMdtAF3WcbZWzs/2tgXCcRlYybByUSEHRCGwSUMwySOSSxdoMT83JFn9uHMHYDwRJQ2QhPqdWnE7/+l+/gHhcWs4AqE63AXrDRPHQIDAQAB', 'REVOKED', '2026-06-19 23:35:28', '2026-06-20 11:39:16');
+INSERT INTO `key_store` VALUES (13, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjM0dPlmJ4AFPufidAjBXvo9OWjP70kT+mepBuAW4kytkgdh18OzaeQflqvxsZsejxSft1yTROGmFG8AgMXjafzUjDpNuaASgkp0kC7q56wZ46j9kfxZrSaMc342b2q2r5miwZ2wgbgaWFHh3ZZ0o0Jg2macT1haUDREwZLZHruaJjP19DUOkjmikwM3S1h/DKw8cGGbgIi1VVx1VeYLiIlwEaQJIsnmgwaZS2UIAS9yEr09MqtvExVaplSt1VmvVGftmD/ZJTMP3jFLkcmVBCWdwDGUz8ptrkhMjY3/dWpftJX8NTvyMk8uqS8Rs+C4jzCVoM2nH0Fep0FAYfIxjIwIDAQAB', 'REVOKED', '2026-06-20 11:39:19', '2026-06-20 12:18:02');
+INSERT INTO `key_store` VALUES (14, 2, 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuceLWidHpAetp+C9HH1yvrNSdV5b0v8P+I5X589mw6yIHSI2PUFVyJJK0DVIvte0xv/DD4xiI07K+yhoJCF2tAC5Q7uiD3oKXs9Xy431vbs1qu7drQWnVzNwzu9cIGOPtNNVN5KFmZh0MCajVIhbEkMIK4CAKLcwTzH14PbVp3PsfNgOvISYgtz0iSV5vCbJP9mnB2Azq+C/DQ12Jn0B3KUrrSwKrNHDpYXjE0wg6LJ87gRmUM6PEscWAcpFf8jX1wkfFmaJ7iktiXI7iSFuiOI/0bLiQ/SLLUSswnehdpJws0FOdRAIrXGkTmowpnyTu03lzGeJ+K9ZizT36DmUZQIDAQAB', 'ACTIVE', '2026-06-20 12:18:05', NULL);
 
 -- ----------------------------
 -- Table structure for order_items
@@ -76,49 +80,17 @@ CREATE TABLE `order_items`  (
   `quantity` int NULL DEFAULT NULL,
   `price` double NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_items
 -- ----------------------------
-INSERT INTO `order_items` VALUES (1, 0, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (2, 0, 7, 4, 90000);
-INSERT INTO `order_items` VALUES (3, 0, 8, 4, 95000);
-INSERT INTO `order_items` VALUES (4, 0, 3, 3, 45000);
-INSERT INTO `order_items` VALUES (5, 0, 7, 1, 90000);
-INSERT INTO `order_items` VALUES (6, 0, 4, 1, 38000);
-INSERT INTO `order_items` VALUES (7, 0, 8, 7, 95000);
-INSERT INTO `order_items` VALUES (8, 0, 5, 1, 25000);
-INSERT INTO `order_items` VALUES (9, 0, 2, 9, 32000);
-INSERT INTO `order_items` VALUES (10, 0, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (11, 0, 1, 2, 65000);
-INSERT INTO `order_items` VALUES (12, 0, 7, 5, 90000);
-INSERT INTO `order_items` VALUES (13, 0, 4, 2, 38000);
-INSERT INTO `order_items` VALUES (14, 12, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (15, 13, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (16, 14, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (17, 15, 2, 1, 32000);
-INSERT INTO `order_items` VALUES (18, 15, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (19, 16, 2, 1, 32000);
-INSERT INTO `order_items` VALUES (20, 17, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (21, 18, 7, 1, 90000);
-INSERT INTO `order_items` VALUES (22, 18, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (23, 19, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (24, 20, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (25, 21, 2, 1, 32000);
-INSERT INTO `order_items` VALUES (26, 22, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (27, 23, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (28, 24, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (29, 25, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (30, 26, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (31, 27, 8, 1, 95000);
-INSERT INTO `order_items` VALUES (32, 28, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (33, 29, 2, 1, 32000);
-INSERT INTO `order_items` VALUES (34, 30, 11, 1, 2131);
-INSERT INTO `order_items` VALUES (35, 31, 4, 1, 38000);
-INSERT INTO `order_items` VALUES (36, 32, 5, 1, 25000);
-INSERT INTO `order_items` VALUES (37, 33, 5, 1, 25000);
-INSERT INTO `order_items` VALUES (38, 34, 8, 1, 95000);
+INSERT INTO `order_items` VALUES (48, 43, 8, 1, 95000);
+INSERT INTO `order_items` VALUES (49, 44, 2, 1, 32000);
+INSERT INTO `order_items` VALUES (50, 45, 7, 1, 90000);
+INSERT INTO `order_items` VALUES (51, 46, 11, 1, 2131);
+INSERT INTO `order_items` VALUES (52, 47, 2, 1, 32000);
+INSERT INTO `order_items` VALUES (53, 48, 5, 1, 25000);
 
 -- ----------------------------
 -- Table structure for orders
@@ -137,45 +109,17 @@ CREATE TABLE `orders`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_order_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, '2026-03-11 22:16:21', 95000, NULL, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (2, '2026-03-11 22:17:43', 360000, NULL, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (3, '2026-03-11 23:39:49', 380000, 2, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (4, '2026-03-11 23:42:16', 135000, 2, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (5, '2026-03-11 23:56:36', 90000, 2, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (6, '2026-03-11 23:58:34', 703000, 2, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (7, '2026-03-12 15:33:47', 25000, 2, 'PENDING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (8, '2026-03-12 20:50:42', 288000, 2, 'SHIPPING', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (9, '2026-03-12 21:05:46', 2131, 2, 'COMPLETED', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (10, '2026-03-12 21:23:50', 580000, 1, 'COMPLETED', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (11, '2026-03-12 21:24:02', 76000, 2, 'CANCELLED', NULL, NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (12, '2026-06-13 09:07:51', 95000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:07:51Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":12,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (13, '2026-06-13 09:13:13', 95000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:13:13Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":13,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (14, '2026-06-13 09:14:50', 2131, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:14:50Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":14,\"total\":2131.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (15, '2026-06-13 09:15:55', 127000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:15:56Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1},{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":15,\"total\":127000.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (16, '2026-06-13 09:16:45', 32000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:16:45Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1}],\"order_id\":16,\"total\":32000.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (17, '2026-06-13 09:20:58', 2131, 2, 'PENDING', '{', 'Kj0o2C+WQNANQj52AYiKh6b0cDwhuD/URRYKZ8o3R8EmcGNQVS1CZuwi01Tschnz56hpjoXkGN6YrHZ6xI4bA/ubFCNSQBIszqcZ8tME6Ho+pY5i9vnHDJiwRvCpwPOU3a9SRJLcu9+djJ98JPZ0wmN7BVgJfrfx/HCK6Dn16Z0oZ5C9ts8eA/URvoP2el6d4bAmzu6BMTRMBIfdq+w+FlKS9E13L8+/0a7hBZMQ2qotxgPOlQOdQcMq3n1uv3hh8kn6mRjsPg/kvOvgwpzgEoLnQM3SZ4DO9RIzePxJAzjrZ+sfWMuLNeD4kIGth2J3BPONA1NiSdfMxJ+PgpTCyg==', 'MISMATCH', 1);
-INSERT INTO `orders` VALUES (18, '2026-06-13 09:31:26', 92131, 2, 'PENDING', '{\"created_at\":\"2026-06-13T09:31:26Z\",\"items\":[{\"price\":90000.0,\"product_id\":7,\"product_name\":\"Phô Mai Cheddar\",\"quantity\":1},{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":18,\"total\":92131.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (19, '2026-06-13 09:32:21', 2131, 7, 'PENDING', '{\"created_at\":\"2026-06-13T09:32:21Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":19,\"total\":2131.0,\"user_id\":7,\"username\":\"duy11\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (20, '2026-06-13 09:36:54', 2131, 7, 'PENDING', '{\"created_at\":\"2026-06-13T09:36:54Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":20,\"total\":2131.0,\"user_id\":7,\"username\":\"duy11\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (21, '2026-06-13 09:41:17', 32000, 7, 'PENDING', '{\"created_at\":\"2026-06-13T09:41:17Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1}],\"order_id\":21,\"total\":32000.0,\"user_id\":7,\"username\":\"duy11\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (22, '2026-06-13 09:51:59', 2131, 7, 'SHIPPING', '{\"created_at\":\"2026-06-13T09:51:59Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":22,\"total\":2131.0,\"user_id\":7,\"username\":\"duy11\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (23, '2026-06-13 09:53:46', 2131, 2, 'PENDING', '{', 'Up16fCbQ6oV79y/lVybbWgafEKF6hsGVEd0lipm8fGPzLV910wV6To/7QxDXDjDKdhYKP2WD4vIi6j+f7CnXW4EFV7phLZpPToly6Cpo9izSYqAJfFd9vQyvJAK8n6vg9I54x362KebmQYJeCHbbgJEIKWaX/hDKh6Qd4T+jqGyJavSi8v10CslXnJhz8lImZjRW9HuSVZyCYcl7k4DdP84T+6GC1F57XWXhTh30dy7mXsqX0uS54MHN2XHVxFa/3YdY+HXNe0OpUmenEeQNcPJTrhCbBbDcZcVLNZivSkRFOp06A+7g8mW/3louGx3GQrv81mab6FEViy6RujY2GA==', 'MISMATCH', 6);
-INSERT INTO `orders` VALUES (24, '2026-06-13 10:03:25', 95000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T10:03:25Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":24,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', 'sfsjEo++vkGR188WegrCgzmfw9gJ4VcEEiNKifU+lJoj9brzmO5vng7He5OTqkLfEJlTc9GMW2pl7j++zKRcVihIjiRzDNKeEkEAshmqdnMRGTpjr0qL7sVFPF8lYCOZ3FmzVie2t45t029EGWpyNX2pysusaXxGSwv9BSXLSAHkzQ4pkhs6ncXbw6+AHHKC8D6Vz9I8ekSEIZ70BG6wc1ggBoqHmd6K+qEVQe4hI2pwFay5fpEgxYxnl7lgAorJ7U+K0QaJ0bm8lyUvsQMsMxwALuXx3rrtE1Jl1kSI4t82OKsAoVQF4XZAP5dhN6ESvJjS1Q0paX1ROZ7dnM60Cw==', 'MISMATCH', 6);
-INSERT INTO `orders` VALUES (25, '2026-06-13 10:06:51', 2131, 2, 'PENDING', '{\"created_at\":\"2026-06-13T10:06:51Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":25,\"total\":2131.0,\"user_id\":2,\"username\":\"duy\"}', 'Ogt1Exdad3AIszF4THJz0pf9N+Gt+ntgXNpMjfIvel0GZUOP2GtpKaZ9yiXF1mlc/rhuhWpCOXBDM3G/djBOatBizdInTt4VqKwa85s8P4PjNnzCXLWdL1d6PTgScXOt30O+uhryByz1am+aldAQqK2OyTGBIAE0CTRiEWZ5B18PNFDsFmtDMJ+iOWQAOYxFRXC0tTgoUdK9AiGE7MJ6vtA00Yb/PQ1nQieEKZ/PAP3qHJYK8Da1UYwf5QlD4CLDDyW1hZiUVjo/JsdtA8Gq3L6jthhHm8t9Ed02E76t7p0lODtmFiIrcZx0F3kPT4A9Oq4Gamamf0DUu3yQdCTTsw==', 'MISMATCH', 6);
-INSERT INTO `orders` VALUES (26, '2026-06-13 10:10:04', 95000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T10:10:04Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":26,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', '2KFcIhJwwFUoW8tuDmMVbam6SvirzH3LBcmFXQflsAj2VwuiII2MN6EQ7ykft+bd60/+DvSseAb4PpdWH/Ndd9smGdxeCLrjGxIGubHuedSO6hUxO8x1xUyiqOBfmUCqiCF/hhu8p2f/yYC7OPxMsd3sGzu6Wti8ip7gtEbKzcmdiDiwqoQWTGI/8vI2pu4vumeGvrBViMOjoHtec0wFeGyl00hGnL225q2JOMW7qA/OclE/05HheyZHOKIVBUOIrV+EbPGjU+6qM69VrgLVTgmuROCL2JAs/l7bsNYU17HJ2DM8R5ywCJb+DGp7bR5wqPbSJjamcr+JduhrSEFh7Q==', 'MISMATCH', 7);
-INSERT INTO `orders` VALUES (27, '2026-06-13 10:47:20', 95000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T10:47:20Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":27,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', 'Ye/RCW88vncDxrZb36sRy76HczVynd9c+jm78T+LT6onvoyRt5nU5LMmjcetMoZRssm36FmY3sA0rGuhB+y4FZCkEdIaEm14LQUqgbzIiKN6sxKNDW5qqHPzVf2X2HDOWHsqyUPG/BfzM7DgNeSxKZh3p0cB/VoxMjyXfd6wrVUNKeIcdfYVcgiD4NFv5hkWAzYYFLLBozoPhBS0BQ8gAaKEWAZ8djnJf41+X38QECymJ2osLfwoWCni5MDcxtRHWW4TLEZN3S2j8yAhCJcA6jEQcsEkwxr7YbOXl2VupYkqHlo8xrbTxBh+LAALtBNQSovxwWJBVldKCtiTHme4Fw==', 'MISMATCH', 7);
-INSERT INTO `orders` VALUES (28, '2026-06-13 10:51:27', 2131, 2, 'SHIPPING', '{\"created_at\":\"2026-06-13T10:51:27Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":28,\"total\":2131.0,\"user_id\":2,\"username\":\"duy\"}', 'vFvQbSOc2tfhmZoXpCSC9bX5SDLXKgcNRDT00QgoFNbyLAwt3YbA8ffR2yMXiTybjw9kQ1NE1CkltPjWqy+4u8hQiyOZKe1SkFBPkTkP6O1chz7SmchHnf1KCIXKWmcy9vtj3CAROr+vypU8G8w8wb/+XVGJbHPlYq5Lj4Wk13zBM2jpU6P1VJuAqXdpKOttIUe2M7nk7l6XOlbkwktIM5w4uZklEMdj1hEmNBBcsQNx9IWEu1q8WJNI/kOP3Qk7KR8s9jM4nE5cSu7rI5lsg+jgk8vTXq3NF/w1nyedWKxJdn8o49EaeXkb8j1QqJfGYODhzixxhOBJwUl84VCvlw==', 'MISMATCH', 7);
-INSERT INTO `orders` VALUES (29, '2026-06-13 12:02:16', 32000, 2, 'PENDING', '{\"created_at\":\"2026-06-13T12:02:16Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1}],\"order_id\":29,\"total\":32000.0,\"user_id\":2,\"username\":\"duy\"}', NULL, 'UNSIGNED', NULL);
-INSERT INTO `orders` VALUES (30, '2026-06-13 12:03:28', 2131, 2, 'COMPLETED', '{\"created_at\":\"2026-06-13T12:03:28Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":30,\"total\":2131.0,\"user_id\":2,\"username\":\"duy\"}', 'IJXbgcCqguSh7aNx/XqhWSpLAG4eKG4PeXrbQ293RxcJuys1AJk1ZFNimFG3G1RDoBhEm/ak1QdW9qouNiIjpueTzlpQtqswSto/nIvZ0b/53GmQ+vYCh1q7QLpQ5rRZAYmb5v+uFgLeaS6qRGc5JYVWSc9OW2Nm39xXerug+//uZxABrOlYdr+qwTnHW6gCvTV3BvKsHJW9NnHGmlX1YEtqSvNaZuDTuPZYgxgn2vEB+7r0h01tcUsnJjfuaUXS/zHMWee3I4wyQ7iM49IsANr8cLHM86naMCFA1DVIPv7VlRhjpuFzujKPelidNhlZOx4bqpzHeJdPfduM4NuCrw==', 'MISMATCH', 8);
-INSERT INTO `orders` VALUES (31, '2026-06-16 00:36:56', 38000, 2, 'PENDING', '{\"created_at\":\"2026-06-16T00:36:56Z\",\"items\":[{\"price\":38000.0,\"product_id\":4,\"product_name\":\"Sữa Tươi Nguyên Chất\",\"quantity\":1}],\"order_id\":31,\"total\":38000.0,\"user_id\":2,\"username\":\"duy\"}', 'Qi7eFTq6w4sdUwU1ChblJUHQtVhq1SlvtvKB/87ywgAL6yAbv++abtrp58C+u3nU3rcyPu66Mf7/Q+Lu/brv9+OGKcH2RTP2OIoG8Ov3j6CRsOe/Cr+w/rphYbU7kUQbJC5PQimzqzG6QO/o+Pc44vf4ddGPLVMKYZAoQ3rr5xDzTzevIi5Xdg7c/THe1ei9CY4t8tAOE+JuDgYcjI+v6jK9ms3K7FqYhTw3iG01tI5jd/rkTmXrz2IAJhyMOMr/MP/YbCvCG24DMvIk4yk309e+6XQCM6xg4x308yPt+j1c9UFRBIISWg1AT1ij1cWUHfXkohlzW9IVC3G4XwVxug==', 'SIGNED', 10);
-INSERT INTO `orders` VALUES (32, '2026-06-16 00:42:18', 25000, 2, 'COMPLETED', '{\"created_at\":\"2026-06-16T00:42:18Z\",\"items\":[{\"price\":25000.0,\"product_id\":5,\"product_name\":\"Khoai Tây Chiên Giòn\",\"quantity\":1}],\"order_id\":32,\"total\":25000.0,\"user_id\":2,\"username\":\"duy\"}', 't2CDIPy1ZBTPhW4o3lwys844lJGc6X0HGJgY4UApbGvGT+ITR6+prm6hk9D9oyOJesA08vSNKtE8XQ+1rH9e0c4hNDL5Hg5yN5tAK/O0UXkSOp0ax8X6elUy5Cksbtfy28EtXYd5TCKRInzQpeQrtU8VKnxOv7u2EkG/UjosC7rP01ottnE8W5oc2k7WLwLIG9RkTwJHwV767xg5kUb2BYeLuRQpBJUYrutyKeugtABqJyAyLT4OghvD24RaVXRaoojRR9mcR18O+ZtzzBRu5P7ofS+w+oXoaRcetgq6Raf7hq1JWBvSFMdAgOd06wp1CRImJBZm+7OdVeTuz0V7ew==', 'SIGNED', 10);
-INSERT INTO `orders` VALUES (33, '2026-06-16 01:08:01', 25000, 2, 'PENDING', '{\"created_at\":\"2026-06-16T01:08:01Z\",\"items\":[{\"price\":25000.0,\"product_id\":5,\"product_name\":\"Khoai Tây Chiên Giòn\",\"quantity\":1}],\"order_id\":33,\"total\":25000.0,\"user_id\":2,\"username\":\"duy\"}', 'RpVMvPGfnPULmo8DBD1ngZvYOatMl9+tX77TKRccivhuxG+XgQXIt+Ulp4elf3NZQgf4/HoL/bYWfQEr2Dl5boDScKL99y9vVnhqM79Kbj8WXGtDm1SYcYJt6BCJooqA+dJqHghq31R7jtPiuqlXiW2VNQu1nafU1fL3emAksaq4EEsm686LdQzLlTdBQALfTVYeiuQZRvFhn3xnFz3+nsXwsUe3ZsMkzlrSGbxolGEQvo3y3S/eZUYR6m1ewTDGLvNPKPplDUqZIBTjgw54v0TrcNXLj9DeSQdNYPmYA/hINOFcFpyXZnswihI/WI2xtznxk1C4L6651NymV/VgUg==', 'MISMATCH', 10);
-INSERT INTO `orders` VALUES (34, '2026-06-16 01:16:12', 95000, 2, 'COMPLETED', '{\"created_at\":\"2026-06-16T01:16:12Z\",\"items\":[{\"price\":9995000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":34,\"total\":95000.0,\"user_id\":2,\"username\":\"duy\"}', 'Cfl29AabESoxahvSE2G3pSRAsjVhRjXp0AFH1Gb4EfiCho7ufhiUcWTiUK8kIXMvxlRZ5NB0HXA6b1eWVfaebyFyHrHsZ+3Y/6MLBVKx/dWK4nNN0ZLQ3Ru8Q29AoEMSh98CPTOF4Alj6//ys39p5cRPaUwx139BI3eMpwzQvFG+Vah9kxZdeDBLfc8BM9R0LHsxQ1z+fWgPbWNGEmIfUqpQOnvdt9DRDkzupanaSER66Rhx2Q6GYSiQi4TAbqgffHGSuZM0MWz3B3eWoYtqqs2uqwmK+xS+Np9D/iJ2eJFcXYP+09gvgpm4GFsnQsdpZpmA2iTEwzkUvi2QKF8Ipw==', 'MISMATCH', 10);
+INSERT INTO `orders` VALUES (43, '2026-06-20 11:35:41', 322354234, 2, 'CANCELLED', '{\"created_at\":\"2026-06-20T11:35:41Z\",\"items\":[{\"price\":95000.0,\"product_id\":8,\"product_name\":\"Dâu Tây Tươi\",\"quantity\":1}],\"order_id\":43,\"total\":9342345000.0,\"user_id\":2,\"username\":\"dudy\"}', 'tuBySv3p34xBL45pVTeX6r6ifrNaTUXQHhc/f86Uw5nYA2/BkTs9Djgk8z1sAeztQTMmPJV7w1YpBU6m66us76XXJoEFl6PPk17OxfEcvjT+Hcr8YPpK3LLc4ank3iVvHxwoRKqbwd80ghVVCCujPq/4ludvEeEkhfPIW80tKPyn1EeJAcIKeFGVpaMXmqAWJWnC13UUwrNwqHhsbI33UHwQgwShCfPAumFFXE5cWBNPIG7JYRKJbOToWifNfCTc1h9i4d3pBZG1OhmOG4smf4vGi2n8MTm+cIHtC5+Aa5O89uzg1jmTfH3hc5wK8Mkfj05g9h3IY322SOaObjEdYA==', 'KHÓA BỊ THU HỒI', 12);
+INSERT INTO `orders` VALUES (44, '2026-06-20 11:40:59', 32000, 2, 'SHIPPING', '{\"created_at\":\"2026-06-20T11:40:59Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1}],\"order_id\":44,\"total\":32000.0,\"user_id\":2,\"username\":\"duy\"}', 'ebwUSE+5maRv0M5ziNSL5XmjhnVRvnKh+zGz3C7fXl164bEVNlvAFped6YWfGiKZDxmkETbfKVWZhyD1doVBdvgaRA8vM0JTfbOvNQXV8xG31pc21/1+PzpuRG8FUoiPQuy0LpzNSTEb52XZ4tEYmsg/GuSFNU6mux06CYzdaDI8b2RYm3WNSBPziJP7SDUFR/ZWauzlLsVZW1yPC2PaSUmq2JrJ65LuaLD6yCHVKfxVJt2/kCIGo7qGSMO2ck3Tlz0MhrxH0ndR2GQT3eMIqriFKrnw6c7psAEm+ZHRG+Me2uX5No5N7h2QneMlQvesdocUMRhGZEEuAvF+b4pt9A==', 'ĐÃ KÝ', 13);
+INSERT INTO `orders` VALUES (45, '2026-06-20 11:42:04', 90000, 2, 'CONFIRMED', '{\"created_at\":\"2026-06-20T11:42:04Z\",\"items\":[{\"price\":90000.0,\"product_id\":7,\"product_name\":\"Phô Mai Cheddar\",\"quantity\":1}],\"order_id\":45,\"total\":90000.0,\"user_id\":2,\"username\":\"duy\"}', 'QkkLRSrbqqGBHYi2juySjQik1oIRN48J2QUNxVqE9bzWo9TyQj7HdYV1BBycUGMRq1CVi4iNBzrO/9gLysNBbYrQz2TfFfSeROa1G/jUwrAywB3cyRZOPQTJQ6a8zz0utSAiIYLHOG8Y8VkCgiJj2UEqnJ1HCYVGWWwf71J+Qotie6IFd8qizsGWs/eVzbDARVeRjTuk9xHAR5KLsD+i/mu//dhd19YDkdWuEqoy79jvf71eZKOWH7ymaRVUrX9SXpDjxeMMFI2sNNU1GuTnlMZKBYE47EIco8bVsuS6MxjXvwsgs4YuFNaAdnihYNfQQs5V4ScxT2N4gpIcptnSfQ==', 'ĐÃ KÝ', 13);
+INSERT INTO `orders` VALUES (46, '2026-06-20 12:15:49', 2131, 2, 'CONFIRMED', '{\"created_at\":\"2026-06-20T12:15:49Z\",\"items\":[{\"price\":2131.0,\"product_id\":11,\"product_name\":\"kivi\",\"quantity\":1}],\"order_id\":46,\"total\":2131.0,\"user_id\":2,\"username\":\"duy\"}', 'Ap2NvlcX79hp1MndPyF9Y1Uq5EvirfHkgRrKjfxvDS63Q61Kc9Rzo7wJPc8Yd5HsURYwd7+562OS7FpZJSwC7Yebff8KNOijv1oGTwXyeB3f0/elJBrBLgPWYv85aXyT39Hf8kkBDDGa5PeqJwokfN2zNfk7sblGZ2YQF3EegbGHAMuDLH5uCPuc81ST3YbWzZzKL4+csW1LDxLJgw8ea3ni4m6EKP4p4Zm5DqSwlvCZD2eWZetTjGZQjQCVwltKLxxPCA/8mkaTrjlyohmkI4Ciu2ALkOqDEqfvNQlaIHw2ldRqOqdXOrulQWwmk36YdUDGztraT6C7Ny85rjAzZA==', 'ĐÃ KÝ', 13);
+INSERT INTO `orders` VALUES (47, '2026-06-20 12:22:15', 32000, 2, 'CONFIRMED', '{\"created_at\":\"2026-06-20T12:22:16Z\",\"items\":[{\"price\":32000.0,\"product_id\":2,\"product_name\":\"Chuối Tươi\",\"quantity\":1}],\"order_id\":47,\"total\":32000.0,\"user_id\":2,\"username\":\"duy\"}', 'gb/iGMzUiynXdhJoicz+Zv2P0n+aSMxZkIGVCSRZJBRozNYTMDkNwIWZlr+5qEXH1XtIrhqyC4zOQAyKDfYsbTutnd3Ctq7dg72H3SYmiFbvs9V3Xen67dlrqBzsUjjGvjK/58mKUADvdD2dEQxS9LHRL2I++RQWyefc6UFyK/WWboHcIU8cFRz6cXLwSOHhk9FDoYDFmwRvVASKajTI8wIhHJt+zaaLVm+de3CQvcacy+lzsSCeF7almuMoWeWijL1rymIjxKy/2x2K5fDDrBa1a73/stHdjhu4i/TUmXO82TmvmiLjBKFb6mtn7bv2/Kj8JOGbq4sFTnS5mwf2wg==', 'ĐÃ KÝ', 14);
+INSERT INTO `orders` VALUES (48, '2026-06-20 12:24:46', 25000, 2, 'CONFIRMED', '{\"created_at\":\"2026-06-20T12:24:46Z\",\"items\":[{\"price\":25000.0,\"product_id\":5,\"product_name\":\"Khoai Tây Chiên Giòn\",\"quantity\":1}],\"order_id\":48,\"total\":25000.0,\"user_id\":2,\"username\":\"duy\"}', 'sREa8OLxDoU4zD07m4SNP979wv9hXPOx5b5b67A2PhIN+6ftwImWYpxkRKjfqick60NDgBNsszLtz41kP3hLO04C+kW0gXHi4psMlfxbbupr4/TRZRP+vYul8mmeK8aOhQ7t4jC4U0g+mPxFbUwajCVqywIStgTbjXkuM92F38xXyYiMJSk238ebEZ4XMlozo2pjf/aLHc1kbaAHxEkV0wvngo086+GWTHP2KZEbUYAMdCFDuyE+pjmhpbC9YOY5jW0VXQ5PfYPEmSyoVmzpzKO6du/otlzorMPLFhkgAC8s+XrlrPq09JuZjxdsonGssAS0NBScS4jIIBhfsgBsog==', 'ĐÃ KÝ', 14);
 
 -- ----------------------------
 -- Table structure for products
@@ -202,15 +146,15 @@ CREATE TABLE `products`  (
 -- Records of products
 -- ----------------------------
 INSERT INTO `products` VALUES (1, 'Táo Hữu Cơ', 65000, 'https://images.pexels.com/photos/209339/pexels-photo-209339.jpeg', 'Táo Fuji hữu cơ giòn và ngọt. Phù hợp để ăn trực tiếp, làm bánh hoặc thêm vào salad.', 1, 1, 98, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (2, 'Chuối Tươi', 32000, 'https://images.pexels.com/photos/2875814/pexels-photo-2875814.jpeg', 'Chuối chín tự nhiên, thích hợp cho sinh tố, làm bánh hoặc ăn nhẹ.', 1, 1, 107, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (3, 'Rau Cải Bó Xôi Hữu Cơ', 45000, 'https://images.pexels.com/photos/1751149/pexels-photo-1751149.jpeg', 'Lá cải bó xôi non hữu cơ tươi. Phù hợp cho salad, xào hoặc sinh tố.', 2, 3, 57, '2026-03-06 19:22:48');
+INSERT INTO `products` VALUES (2, 'Chuối Tươi', 32000, 'https://images.pexels.com/photos/2875814/pexels-photo-2875814.jpeg', 'Chuối chín tự nhiên, thích hợp cho sinh tố, làm bánh hoặc ăn nhẹ.', 1, 1, 105, '2026-03-06 19:22:48');
+INSERT INTO `products` VALUES (3, 'Rau Cải Bó Xôi Hữu Cơ', 45000, 'https://images.pexels.com/photos/1751149/pexels-photo-1751149.jpeg', 'Lá cải bó xôi non hữu cơ tươi. Phù hợp cho salad, xào hoặc sinh tố.', 2, 3, 56, '2026-03-06 19:22:48');
 INSERT INTO `products` VALUES (4, 'Sữa Tươi Nguyên Chất', 38000, 'https://images.pexels.com/photos/2198626/pexels-photo-2198626.jpeg', 'Sữa tươi nguyên chất tiệt trùng loại A. Hương vị béo và thơm, thích hợp để uống hoặc nấu ăn.', 3, 5, 76, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (5, 'Khoai Tây Chiên Giòn', 25000, 'https://images.pexels.com/photos/479628/pexels-photo-479628.jpeg', 'Khoai tây chiên giòn vị muối cổ điển. Món ăn vặt hoàn hảo cho mọi dịp.', 4, 6, 147, '2026-03-06 19:22:48');
+INSERT INTO `products` VALUES (5, 'Khoai Tây Chiên Giòn', 25000, 'https://images.pexels.com/photos/479628/pexels-photo-479628.jpeg', 'Khoai tây chiên giòn vị muối cổ điển. Món ăn vặt hoàn hảo cho mọi dịp.', 4, 6, 145, '2026-03-06 19:22:48');
 INSERT INTO `products` VALUES (6, 'Cà Rốt Hữu Cơ', 30000, 'https://images.pexels.com/photos/6631952/pexels-photo-6631952.jpeg', 'Cà rốt hữu cơ giòn và ngọt. Thích hợp để ăn sống, nướng hoặc ép nước.', 2, 3, 70, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (7, 'Phô Mai Cheddar', 90000, 'https://images.pexels.com/photos/139746/pexels-photo-139746.jpeg', 'Khối phô mai cheddar vị đậm. Phù hợp cho sandwich, món nướng hoặc ăn kèm.', 3, 4, 29, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (8, 'Dâu Tây Tươi', 95000, 'https://images.pexels.com/photos/2820144/pexels-photo-2820144.jpeg', 'Dâu tây tươi ngon và mọng nước. Phù hợp cho tráng miệng, sinh tố hoặc ăn nhẹ.', 1, 6, 71, '2026-03-06 19:22:48');
+INSERT INTO `products` VALUES (7, 'Phô Mai Cheddar', 90000, 'https://images.pexels.com/photos/139746/pexels-photo-139746.jpeg', 'Khối phô mai cheddar vị đậm. Phù hợp cho sandwich, món nướng hoặc ăn kèm.', 3, 4, 26, '2026-03-06 19:22:48');
+INSERT INTO `products` VALUES (8, 'Dâu Tây Tươi', 95000, 'https://images.pexels.com/photos/2820144/pexels-photo-2820144.jpeg', 'Dâu tây tươi ngon và mọng nước. Phù hợp cho tráng miệng, sinh tố hoặc ăn nhẹ.', 1, 6, 65, '2026-03-06 19:22:48');
 INSERT INTO `products` VALUES (9, 'Sữa Chua Hy Lạp', 18000, 'https://images.pexels.com/photos/414262/pexels-photo-414262.jpeg', 'Sữa chua Hy Lạp nguyên chất, giàu protein, vị béo và hơi chua nhẹ.', 3, 4, 110, '2026-03-06 19:22:48');
-INSERT INTO `products` VALUES (11, 'kivi', 2131, 'https://cdn.tgdd.vn/Files/2014/09/25/569033/10-loai-trai-cay-cap-cuu-khi-bi-benh1.jpg', 'asfasd d d', 1, 5, 26, '2026-03-12 18:02:45');
+INSERT INTO `products` VALUES (11, 'kivi', 2131, 'https://cdn.tgdd.vn/Files/2014/09/25/569033/10-loai-trai-cay-cap-cuu-khi-bi-benh1.jpg', 'asfasd d d', 1, 5, 25, '2026-03-12 18:02:45');
 
 -- ----------------------------
 -- Table structure for security_log
