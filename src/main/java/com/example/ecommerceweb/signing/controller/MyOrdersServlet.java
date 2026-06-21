@@ -40,11 +40,6 @@ public class MyOrdersServlet extends HttpServlet {
                 	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
                     req.setAttribute("detailKey", detailKey);
                 }
-                if(detailKey != null) {
-                    Date revokedKeyDate = detailKey.getRevokedAt() != null ? 
-                    		Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
-                    req.setAttribute("revokedDate", revokedKeyDate);
-                }
                 req.setAttribute("detailOrder", detailOrder);
                 req.getRequestDispatcher("WEB-INF/sign/myOrderDetail.jsp")
                         .forward(req, resp);
@@ -54,13 +49,6 @@ public class MyOrdersServlet extends HttpServlet {
             	int userId = user.getId();
                 List<Order> orders = OrderDAO.getOrdersByUserId(userId);
                 orders = SignatureVerifier.verifyOrders(orders);
-              
-                KeyStore lastestKey = KeyDAO.getActiveKey(userId);
-                // Vì createdAt trong key là LocalDateTime nên chuyển sang kiểu Date để thực hiện so sánh trong jsp
-                Date lastestKeyDate = lastestKey != null ?
-                		Date.from(lastestKey.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
-                
-                req.setAttribute("keyDate", lastestKeyDate);
                 req.setAttribute("orders", orders);
                 req.setAttribute("currentPage", "myOrders");
                 req.getRequestDispatcher("/WEB-INF/sign/myOrders.jsp").forward(req, resp);

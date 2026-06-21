@@ -20,6 +20,7 @@
         .status-shipping  { background:#cce5ff; color:#004085; }
         .status-completed { background:#d4edda; color:#155724; }
         .status-cancelled { background:#f8d7da; color:#721c24; }
+        .status-confirmed { background: #ddd6fe; color: #5b21b6; }
 
         .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
         .sig-SIGNED   { background:#d4edda; color:#155724; }
@@ -84,9 +85,9 @@
                         </strong>
                     </td>
                     <td><span class="status-badge status-${o.status.name().toLowerCase()}">${o.status.label}</span></td>
-                    <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span></td>
+                    <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatusLabel}</span></td>
                     <td>
-                        <c:if test="${o.sigStatus != 'SIGNED' && not empty keyDate && o.orderDate.time > keyDate.time}">
+                        <c:if test="${(o.sigStatus != 'SIGNED' && o.sigStatus != 'KEY_REVOKED') && o.status.name() == 'PENDING'}">
                             <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
                         </c:if>
                         <c:if test="${o.sigStatus != 'UNSIGNED'}">

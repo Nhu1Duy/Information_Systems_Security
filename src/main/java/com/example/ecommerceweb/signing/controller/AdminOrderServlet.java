@@ -32,13 +32,6 @@ public class AdminOrderServlet extends HttpServlet {
                 OrderDAO.updateStatus(idUpdate, newStatus);
                 response.sendRedirect("adminOrder");
                 break;
-
-            case "delete":
-                int idDelete = Integer.parseInt(request.getParameter("id"));
-                OrderDAO.delete(idDelete);
-                response.sendRedirect("adminOrder");
-                break;
-
             case "verify":
                 verifyOrder(request, response);
                 break;
@@ -51,11 +44,7 @@ public class AdminOrderServlet extends HttpServlet {
                 	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
                     request.setAttribute("detailKey", detailKey);
                 }
-                if(detailKey != null) {
-                    Date revokedKeyDate = detailKey.getRevokedAt() != null ? 
-                    		Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant()) : null;
-                    request.setAttribute("revokedDate", revokedKeyDate);
-                }
+                
                 request.setAttribute("detailOrder", detailOrder);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
                         .forward(request, response);
