@@ -52,6 +52,17 @@
             <a href="${pageContext.request.contextPath}/cart" class="cart-icon" aria-label="Giỏ hàng">
                 <i class="fas fa-shopping-cart"></i>
             </a>
+
+            <c:if test="${not empty sessionScope.user}">
+                <a href="https://drive.google.com/file/d/1va-PY5UD5vOUjkzxlKWiq1Y2ZqKme7Oa/view"
+                   class="download-sign-tool-btn"
+                   target="_blank"
+                   rel="noopener"
+                   aria-label="Tai tool ky so">
+                    <i class="fas fa-download"></i>
+                    <span>Tải Tool ký số</span>
+                </a>
+            </c:if>
         </div>
     </nav>
 </header>
