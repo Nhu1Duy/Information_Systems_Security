@@ -4,11 +4,14 @@ import com.example.ecommerceweb.infor.JdbiConnector;
 import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.model.OrderItem;
 import com.example.ecommerceweb.signing.model.OrderStatus;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.PreparedBatch;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class OrderDAO {
 
@@ -28,12 +31,13 @@ public class OrderDAO {
     public static void insertOrderItems(List<OrderItem> items) {
         Jdbi jdbi = JdbiConnector.get();
         try (Handle handle = jdbi.open()) {
-            String sql = "INSERT INTO order_items(order_id, product_id, quantity, price) " +
-                    "VALUES(:orderId, :productId, :quantity, :price)";
+            String sql = "INSERT INTO order_items (order_id, product_id, product_name, quantity, price)\n" +
+                    "VALUES (:orderId, :productId, :productName, :quantity, :price)";
             PreparedBatch batch = handle.prepareBatch(sql);
             for (OrderItem item : items) {
                 batch.bind("orderId", item.getOrderId())
                         .bind("productId", item.getProductId())
+                        .bind("productName", item.getProductName())
                         .bind("quantity", item.getQuantity())
                         .bind("price", item.getPrice())
                         .add();
@@ -152,5 +156,50 @@ public class OrderDAO {
                     .mapToBean(Order.class)
                     .list();
         }
+    }
+
+    public static String buildCanonicalJsonFromDB(int orderId) {
+        Jdbi jdbi = JdbiConnector.get();
+        try (Handle handle = jdbi.open()) {
+            String orderSql = "SELECT o.id, o.total, o.user_id, u.username, o.order_date FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = :id";  Map<String, Object> order = handle.createQuery(orderSql)
+                    .bind("id", orderId)
+                    .mapToMap()
+                    .findOne()
+                    .orElse(null);
+            if (order == null) return null;
+            String itemSql = "SELECT product_id, product_name, quantity, price FROM order_items WHERE order_id = :orderId ORDER BY product_id ASC";
+
+            List<Map<String, Object>> items = handle.createQuery(itemSql)
+                    .bind("orderId", orderId)
+                    .mapToMap()
+                    .list();
+
+            TreeMap<String, Object> result = new TreeMap<>();
+            result.put("created_at", formatTimestamp(order.get("order_date")));
+            result.put("order_id",   order.get("id"));
+            result.put("total",      order.get("total"));
+            result.put("user_id",    order.get("user_id"));
+            result.put("username",   order.get("username"));
+
+            List<TreeMap<String, Object>> itemList = new ArrayList<>();
+            for (Map<String, Object> item : items) {
+                TreeMap<String, Object> i = new TreeMap<>();
+                i.put("price",        item.get("price"));
+                i.put("product_id",   item.get("product_id"));
+                i.put("product_name", item.get("product_name"));
+                i.put("quantity",     item.get("quantity"));
+                itemList.add(i);
+            }
+            result.put("items", itemList);
+
+            return new GsonBuilder().disableHtmlEscaping().create().toJson(result);
+        }
+    }
+    private static String formatTimestamp(Object orderDate) {
+        if (orderDate instanceof java.sql.Timestamp) {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                    .format((java.sql.Timestamp) orderDate);
+        }
+        return orderDate != null ? orderDate.toString() : "";
     }
 }

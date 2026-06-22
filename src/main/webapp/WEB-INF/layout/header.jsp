@@ -54,13 +54,13 @@
             </a>
 
             <c:if test="${not empty sessionScope.user}">
-                <a href="https://drive.google.com/file/d/1va-PY5UD5vOUjkzxlKWiq1Y2ZqKme7Oa/view"
+                <a href="hhttps://drive.google.com/file/d/1va-PY5UD5vOUjkzxlKWiq1Y2ZqKme7Oa/view?usp=sharing"
                    class="download-sign-tool-btn"
                    target="_blank"
                    rel="noopener"
                    aria-label="Tai tool ky so">
                     <i class="fas fa-download"></i>
-                    <span>Tải Tool ký số</span>
+                    <span>Tải Tool</span>
                 </a>
             </c:if>
         </div>
