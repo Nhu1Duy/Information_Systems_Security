@@ -40,6 +40,10 @@
         .own-key-note { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:1rem; color:#166534; }
         .own-public-key-input { width:100%; min-height:160px; font-family:monospace; font-size:12px;
             padding:12px; border:1px solid #d1d5db; border-radius:8px; resize:vertical; box-sizing:border-box; }
+        .own-key-action-row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:1rem; }
+        .own-key-import-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .own-key-file-name { color:#555; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+        .own-key-file-input { display:none; }
         .key-choice-error { color:#dc2626; font-size:13px; margin-top:8px; min-height:18px; }
         .key-choice-actions { display:flex; justify-content:flex-end; margin-top:1.25rem; }
         .private-key-source { display:none; }
@@ -96,12 +100,11 @@
         </c:choose>
     </div>
 
-    <!-- Phan code cua toi: cho nguoi dung dung public key ca nhan thay vi cap khoa do he thong tao. -->
     <div class="key-card">
         <h2>Dùng public key của bạn</h2>
         <div class="own-key-layout">
             <div>
-                <p style="color:#555;">Nếu bạn đã có cặp khóa riêng, hãy dán public key RSA vào đây. Khi ký đơn, bạn vẫn dùng private key tương ứng trên máy của mình.</p>
+                <p style="color:#555;">Nếu bạn đã có cặp khóa riêng, hãy dán public key RSA vào đây. Khi ký đơn, bạn vẫn dùng private key tương ứng của mình.</p>
                 <c:choose>
                     <c:when test="${activeKey != null}">
                         <p style="color:#555;">Bạn cần báo mất/thu hồi khóa hiện tại trước khi thay bằng public key cá nhân.</p>
@@ -110,10 +113,20 @@
                     <c:otherwise>
                         <form action="key" method="POST">
                             <input type="hidden" name="action" value="use-own-public-key"/>
-                            <textarea class="own-public-key-input" name="ownPublicKey"
+                            <textarea id="ownPublicKeyInput" class="own-public-key-input" name="ownPublicKey"
                                       placeholder="Dán public key RSA của bạn tại đây. Hỗ trợ Base64 hoặc PEM public key." required></textarea>
-                            <br/><br/>
-                            <button type="submit" class="btn-secondary">Sử dụng public key này</button>
+                            <div class="own-key-action-row">
+                                <button type="submit" class="btn-secondary">Sử dụng public key này</button>
+                                <div class="own-key-import-row">
+                                    <span id="ownPublicKeyFileName" class="own-key-file-name"></span>
+                                    <button type="button" class="btn-secondary" onclick="document.getElementById('ownPublicKeyFile').click()">
+                                        Import file public key
+                                    </button>
+                                    <input id="ownPublicKeyFile" class="own-key-file-input" type="file"
+                                           accept=".pem,.pub,.txt,text/plain,application/x-pem-file"
+                                           onchange="importOwnPublicKeyFile(this)"/>
+                                </div>
+                            </div>
                         </form>
                     </c:otherwise>
                 </c:choose>
@@ -191,6 +204,27 @@
 </c:if>
 
 <script>
+    function importOwnPublicKeyFile(pubKey) {
+        const file = pubKey.files && pubKey.files[0];
+        const fileNameBox = document.getElementById('ownPublicKeyFileName');
+        const publicKeyInput = document.getElementById('ownPublicKeyInput');
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function () {
+            publicKeyInput.value = String(reader.result || '').trim();
+            fileNameBox.textContent = file.name;
+        };
+        reader.onerror = function () {
+            fileNameBox.textContent = 'Không đọc được file public key.';
+            input.value = '';
+        };
+        reader.readAsText(file);
+    }
+
     function openGmailDraft() {
         const gmailInput = document.getElementById('gmailAddress');
         const errorBox = document.getElementById('gmailError');
