@@ -25,11 +25,6 @@ public class SignatureVerifier {
          for (Order order : orders) {
         	 if(order.getSigStatus().equals(SignatureStatus.SIGNED)) continue;
         	 
-             signature = order.getSignature();
-             if (signature == null || signature.trim().isEmpty()) {
-                 continue;
-             }
-
              key = KeyDAO.getKeyById(order.getKeyId());
              result = SignatureVerifier.verify(order, key);
 
@@ -43,16 +38,18 @@ public class SignatureVerifier {
     
     // Verify đơn hàng và trả về trạng thái chữ ký
     public static String verify(Order order, KeyStore key) {
+    	if (key == null) {
+    		return SignatureStatus.UNSIGNED;
+    	}
     	// Nếu đơn hàng đã được ký và chưa được xác nhận và user báo mất key => doi
-        if (key == null ||
-                (order.getStatus() == OrderStatus.PENDING && order.getSigStatus() == SignatureStatus.SIGNED
-                        && !"ACTIVE".equalsIgnoreCase(key.getStatus()))) {
+        if (order.getStatus() == OrderStatus.PENDING 
+        		&& (order.getSigStatus() == SignatureStatus.SIGNED && order.getSigStatus() == SignatureStatus.MISMATCH)
+                && !"ACTIVE".equalsIgnoreCase(key.getStatus())) {
             return SignatureStatus.KEY_REVOKED;
         }
         
         String signature = order.getSignature();
         String canonicalJson = order.getCanonicalJson();
-
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
