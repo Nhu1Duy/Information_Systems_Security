@@ -6,6 +6,8 @@ import com.example.ecommerceweb.signing.model.KeyStore;
 import com.example.ecommerceweb.signing.model.Order;
 import com.example.ecommerceweb.signing.model.OrderStatus;
 import com.example.ecommerceweb.signing.model.SignatureStatus;
+import com.example.ecommerceweb.signing.service.KeyService;
+import com.example.ecommerceweb.signing.service.OrderService;
 import com.example.ecommerceweb.signing.util.SignatureVerifier;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,6 +20,8 @@ import java.util.List;
 
 @WebServlet("/adminOrder")
 public class AdminOrderServlet extends HttpServlet {
+    private final OrderService orderService = new OrderService();
+    private final KeyService keyService = new KeyService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,7 +33,7 @@ public class AdminOrderServlet extends HttpServlet {
             case "updateStatus":
                 int idUpdate = Integer.parseInt(request.getParameter("id"));
                 OrderStatus newStatus = OrderStatus.fromDbValue(request.getParameter("status"));
-                OrderDAO.updateStatus(idUpdate, newStatus);
+                orderService.updateStatus(idUpdate, newStatus);
                 response.sendRedirect("adminOrder");
                 break;
             case "verify":
@@ -37,27 +41,14 @@ public class AdminOrderServlet extends HttpServlet {
                 break;
 
             case "detail":
-            	int detailId = Integer.parseInt(request.getParameter("id"));
-                Order detailOrder = OrderDAO.getOrderById(detailId);
-                KeyStore detailKey = null;
-                if (detailOrder != null && detailOrder.getKeyId() > 0) {
-                	detailKey = KeyDAO.getKeyById(detailOrder.getKeyId());
-                    request.setAttribute("detailKey", detailKey);
-                }
-                
-                request.setAttribute("detailOrder", detailOrder);
-                request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
-                        .forward(request, response);
+                handleDetail(request, response);
                 break;
 
             default:
-                List<Order> orders = OrderDAO.getAllOrders();
-                orders = SignatureVerifier.verifyOrders(orders);
-                
+                List<Order> orders = orderService.getAllOrders();
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("WEB-INF/sign/adminOrder.jsp")
                         .forward(request, response);
-                break;
         }
     }
 
@@ -70,27 +61,39 @@ public class AdminOrderServlet extends HttpServlet {
     private void verifyOrder(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int orderId = Integer.parseInt(request.getParameter("id"));
+
         Order order = OrderDAO.getOrderById(orderId);
-        if (order == null) { response.sendRedirect("adminOrder"); return; }
-
-        KeyStore key = order.getKeyId() > 0 ? KeyDAO.getKeyById(order.getKeyId()) : null;
-        String result = SignatureVerifier.verify(order, key);
-
-        OrderDAO.updateSigStatus(orderId, result);
-        if (SignatureStatus.SIGNED.equals(result)) {
-            OrderDAO.updateStatus(orderId, OrderStatus.SHIPPING);
+        if (order == null) {
+            response.sendRedirect("adminOrder");
+            return;
         }
-
-        String resultKey;
-        if (SignatureStatus.SIGNED.equals(result)) {
-            resultKey = "SIGNED";
-        } else if (SignatureStatus.MISMATCH.equals(result)) {
-            resultKey = "MISMATCH";
-        } else if (SignatureStatus.KEY_REVOKED.equals(result)) {
-            resultKey = "KEY_REVOKED";
-        } else {
-            resultKey = "UNSIGNED";
+        String resultKey = orderService.verifyOrder(orderId);
+        if (resultKey == null) {
+            response.sendRedirect("adminOrder");
+            return;
         }
         response.sendRedirect("adminOrder?verifyResult=" + resultKey + "&orderId=" + orderId);
+
+    }
+
+    private void handleDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int detailId = Integer.parseInt(request.getParameter("id"));
+        Order detailOrder = orderService.getOrderById(detailId);
+
+        KeyStore detailKey = null;
+        if (detailOrder != null && detailOrder.getKeyId() > 0) {
+            detailKey = keyService.getKeyById(detailOrder.getKeyId());
+            request.setAttribute("detailKey", detailKey);
+        }
+        if (detailKey != null) {
+            Date revokedKeyDate = detailKey.getRevokedAt() != null
+                    ? Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant())
+                    : null;
+            request.setAttribute("revokedDate", revokedKeyDate);
+        }
+        request.setAttribute("detailOrder", detailOrder);
+        request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
+                .forward(request, response);
     }
 }

@@ -36,11 +36,16 @@
         .key-choice-box h3 { margin-top:0; font-size:18px; }
         .gmail-row { display:flex; gap:8px; margin-top:10px; }
         .gmail-row input { flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; }
+        .own-key-layout { display:grid; grid-template-columns:1.1fr .9fr; gap:1.25rem; align-items:start; }
+        .own-key-note { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:1rem; color:#166534; }
+        .own-public-key-input { width:100%; min-height:160px; font-family:monospace; font-size:12px;
+            padding:12px; border:1px solid #d1d5db; border-radius:8px; resize:vertical; box-sizing:border-box; }
         .key-choice-error { color:#dc2626; font-size:13px; margin-top:8px; min-height:18px; }
         .key-choice-actions { display:flex; justify-content:flex-end; margin-top:1.25rem; }
         .private-key-source { display:none; }
         @media (max-width: 680px) {
             .key-choice-grid { grid-template-columns:1fr; }
+            .own-key-layout { grid-template-columns:1fr; }
             .gmail-row { flex-direction:column; }
         }
     </style>
@@ -54,7 +59,6 @@
         <div class="alert-warn">${keyMessage}</div>
     </c:if>
 
-    <!-- Khóa hiện tại -->
     <div class="key-card">
         <h2>Khóa đang hoạt động</h2>
         <c:choose>
@@ -66,35 +70,61 @@
                 <form action="key" method="POST" style="display:inline;"
                       onsubmit="return confirm('Báo mất khóa sẽ thu hồi khóa hiện tại. Bạn cần tạo khóa mới. Tiếp tục?')">
                     <input type="hidden" name="action" value="revoke"/>
-                    <button type="submit" class="btn-danger">⚠️ Báo mất khóa / Thu hồi</button>
+                    <button type="submit" class="btn-danger">Báo mất khóa / Thu hồi</button>
                 </form>
             </c:when>
             <c:otherwise>
-                <p style="color:#666;">Bạn chưa có khóa nào. Hãy tạo khóa để có thể ký đơn hàng.</p>
+                <p style="color:#666;">Bạn chưa có khóa nào. Hãy tạo khóa hoặc dùng public key cá nhân để có thể ký đơn hàng.</p>
             </c:otherwise>
         </c:choose>
     </div>
 
-    <!-- Tạo khóa mới -->
     <div class="key-card">
-        <h2>Tạo khóa mới</h2>
-        <p style="color:#555;">File Private Key sẽ tự động tải về máy. <strong>Lưu giữ cẩn thận — không chia sẻ với ai.</strong></p>
+        <h2>Tạo khóa mới từ hệ thống</h2>
+        <p style="color:#555;">Hệ thống sẽ tạo cặp khóa RSA mới và cho bạn chọn cách lưu private key. <strong>Lưu giữ cẩn thận và không chia sẻ với ai.</strong></p>
         <c:choose>
             <c:when test="${activeKey != null}">
                 <p style="color:#555;">Bạn cần báo mất/thu hồi khóa hiện tại trước khi tạo khóa mới.</p>
-                <button type="button" class="btn-muted" disabled>🔑 Cặp khóa RSA 2048-bit của bạn đang còn hoạt động</button>
+                <button type="button" class="btn-muted" disabled>Cặp khóa RSA 2048-bit của bạn đang còn hoạt động</button>
             </c:when>
             <c:otherwise>
-                <p style="color:#555;">Sau khi tạo khóa hãy chọn cách thức lưu khóa.</p>
                 <form action="key" method="POST">
                     <input type="hidden" name="action" value="generate"/>
-                    <button type="submit" class="btn-primary">🔑 Tạo cặp khóa RSA 2048-bit</button>
+                    <button type="submit" class="btn-primary">Tạo cặp khóa RSA 2048-bit</button>
                 </form>
             </c:otherwise>
         </c:choose>
     </div>
 
-    <!-- Lịch sử khóa -->
+    <!-- Phan code cua toi: cho nguoi dung dung public key ca nhan thay vi cap khoa do he thong tao. -->
+    <div class="key-card">
+        <h2>Dùng public key của bạn</h2>
+        <div class="own-key-layout">
+            <div>
+                <p style="color:#555;">Nếu bạn đã có cặp khóa riêng, hãy dán public key RSA vào đây. Khi ký đơn, bạn vẫn dùng private key tương ứng trên máy của mình.</p>
+                <c:choose>
+                    <c:when test="${activeKey != null}">
+                        <p style="color:#555;">Bạn cần báo mất/thu hồi khóa hiện tại trước khi thay bằng public key cá nhân.</p>
+                        <button type="button" class="btn-muted" disabled>Public key hiện tại đang hoạt động</button>
+                    </c:when>
+                    <c:otherwise>
+                        <form action="key" method="POST">
+                            <input type="hidden" name="action" value="use-own-public-key"/>
+                            <textarea class="own-public-key-input" name="ownPublicKey"
+                                      placeholder="Dán public key RSA của bạn tại đây. Hỗ trợ Base64 hoặc PEM public key." required></textarea>
+                            <br/><br/>
+                            <button type="submit" class="btn-secondary">Sử dụng public key này</button>
+                        </form>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="own-key-note">
+                <strong>Lưu ý:</strong>
+                <p style="margin-bottom:0;">Hệ thống chỉ lưu public key để xác minh chữ ký. Private key vẫn do bạn giữ và không cần gửi lên website.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="key-card">
         <h2>Lịch sử khóa</h2>
         <table class="history-table">
@@ -123,7 +153,6 @@
 </main>
 
 <c:if test="${not empty generatedPrivateKey}">
-    <!--chọn cách thức lưu khóa-->
     <div class="key-choice-overlay" role="dialog" aria-modal="true" aria-labelledby="keyChoiceTitle">
         <div class="key-choice-dialog">
             <h2 id="keyChoiceTitle">Chọn cách lưu private key</h2>
@@ -132,7 +161,7 @@
             <div class="key-choice-grid">
                 <div class="key-choice-box">
                     <h3>Lưu file khóa</h3>
-                    <p>Tải private key về máy</p>
+                    <p>Tải private key về máy.</p>
                     <form action="key" method="POST">
                         <input type="hidden" name="action" value="download-generated-key"/>
                         <button type="submit" class="btn-primary">Lưu file khóa</button>
@@ -163,13 +192,12 @@
 
 <script>
     function openGmailDraft() {
-        //trang gửi mail mới để gửi mail
         const gmailInput = document.getElementById('gmailAddress');
         const errorBox = document.getElementById('gmailError');
         const email = gmailInput.value.trim();
 
         if (!/^[^\s@]+@gmail\.com$/i.test(email)) {
-            errorBox.textContent = 'Hãy nhập địa chỉ gmail hợp lệ.';
+            errorBox.textContent = 'Hãy nhập địa chỉ Gmail hợp lệ.';
             return;
         }
 

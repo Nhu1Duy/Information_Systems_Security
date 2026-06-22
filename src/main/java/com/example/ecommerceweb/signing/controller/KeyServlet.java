@@ -3,6 +3,7 @@ package com.example.ecommerceweb.signing.controller;
 import com.example.ecommerceweb.model.User;
 import com.example.ecommerceweb.signing.dao.KeyDAO;
 import com.example.ecommerceweb.signing.model.KeyStore;
+import com.example.ecommerceweb.signing.service.KeyService;
 import com.example.ecommerceweb.signing.util.RsaKeyCodec;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,20 +14,25 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.List;
 
 @WebServlet("/key")
 public class KeyServlet extends HttpServlet {
+    private KeyService keyService = new KeyService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) { resp.sendRedirect("login"); return; }
+        if (user == null) {
+            resp.sendRedirect("login");
+            return;
+        }
 
-        KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
-        List<KeyStore> keyHistory = KeyDAO.getKeyHistory(user.getId());
+        KeyStore activeKey = keyService.getActiveKey(user.getId());
+        List<KeyStore> keyHistory = keyService.getKeyHistory(user.getId());
         String keyMessage = (String) session.getAttribute("keyMessage");
         String generatedPrivateKey = (String) session.getAttribute("generatedPrivateKey");
         String generatedPrivateKeyFileName = (String) session.getAttribute("generatedPrivateKeyFileName");
@@ -45,12 +51,17 @@ public class KeyServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) { resp.sendRedirect("login"); return; }
+        if (user == null) {
+            resp.sendRedirect("login");
+            return;
+        }
 
         String action = req.getParameter("action");
 
         if ("generate".equals(action)) {
             generateKey(user, session, resp);
+        } else if ("use-own-public-key".equals(action)) {
+            useOwnPublicKey(req, user, session, resp);
         } else if ("revoke".equals(action)) {
             revokeKey(user, session, resp);
         } else if ("download-generated-key".equals(action)) {
@@ -64,37 +75,37 @@ public class KeyServlet extends HttpServlet {
 
     private void generateKey(User user, HttpSession session, HttpServletResponse resp) throws IOException {
         try {
-            //tạo khóa mới sau khi báo mất
-            KeyStore activeKey = KeyDAO.getActiveKey(user.getId());
-            if (activeKey != null) {
-                session.setAttribute("keyMessage", "Bạn cần báo mất/thu hồi khóa hiện tại trước khi tạo khóa mới.");
-                resp.sendRedirect("key");
-                return;
-            }
-
-            KeyPair pair = RsaKeyCodec.generateKeyPair();
-            String pubB64 = RsaKeyCodec.encodePublicKey(pair.getPublic());
-            String privB64 = RsaKeyCodec.encodePrivateKey(pair.getPrivate());
-
-            KeyDAO.insertKey(user.getId(), pubB64);
-
-            //chọn cách lưu khóa
-            session.setAttribute("generatedPrivateKey", privB64);
-            session.setAttribute("generatedPrivateKeyFileName", "private_key_" + user.getUsername() + ".pem");
-            session.setAttribute("keyMessage", "Đã tạo khóa mới, hãy lưu khóa và không chia sẽ khóa với bất kì ai.");
-
-            pair = null;
-            System.gc();
-            resp.sendRedirect("key");
+            KeyService.GenerateKeyResult result = keyService.generateKey(user.getId(), user.getUsername());
+            session.setAttribute("generatedPrivateKey", result.privateKeyB64);
+            session.setAttribute("generatedPrivateKeyFileName",
+                    "private_key_" + user.getUsername() + ".pem");
+            session.setAttribute("keyMessage", result.message);
+        } catch (IllegalStateException e) {
+            session.setAttribute("keyMessage", e.getMessage());
         } catch (Exception e) {
             session.setAttribute("keyMessage", "Lỗi tạo khóa: " + e.getMessage());
-            resp.sendRedirect("key");
         }
+        resp.sendRedirect("key");
+    }
+
+    private void useOwnPublicKey(HttpServletRequest req, User user, HttpSession session, HttpServletResponse resp) throws IOException {
+        try {
+            keyService.useOwnPublicKey(user.getId(), req.getParameter("ownPublicKey"));
+            session.setAttribute("keyMessage",
+                    "Đã lưu public key của bạn. Từ bây giờ hệ thống sẽ dùng public key này để xác minh chữ ký.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            session.setAttribute("keyMessage", e.getMessage());
+        } catch (Exception e) {
+            session.setAttribute("keyMessage",
+                    "Public key không hợp lệ. Hãy kiểm tra lại định dạng RSA public key.");
+        }
+        resp.sendRedirect("key");
     }
 
     private void revokeKey(User user, HttpSession session, HttpServletResponse resp) throws IOException {
-        KeyDAO.revokeAllActiveKeys(user.getId());
-        session.setAttribute("keyMessage", "Đã báo mất và thu hồi khóa hiện tại. Có thể tạo khóa bất kì khi nào.");
+        keyService.revokeKey(user.getId());
+        session.setAttribute("keyMessage",
+                "Đã báo mất và thu hồi khóa hiện tại. Có thể tạo khóa bất kì khi nào.");
         resp.sendRedirect("key");
     }
 
@@ -106,7 +117,6 @@ public class KeyServlet extends HttpServlet {
             resp.sendRedirect("key");
             return;
         }
-
         if (fileName == null || fileName.isBlank()) {
             fileName = "private_key_" + user.getUsername() + ".pem";
         }
