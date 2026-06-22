@@ -13,18 +13,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
     .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
       background: var(--card-bg);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow: var(--shadow); 
     }
     .admin-table th, .admin-table td {
-      padding: 15px;
+      padding: 14px;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
+      font-size:14px;
     }
     .admin-table th {
       background-color: var(--primary-green);
@@ -46,6 +47,7 @@
     .status-shipping  { background: #cce5ff; color: #004085; }
     .status-completed { background: #d4edda; color: #155724; }
     .status-cancelled { background: #f8d7da; color: #721c24; }
+    .status-confirmed { background: #ddd6fe; color: #5b21b6; }
 
     .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
     .sig-SIGNED   { background:#d4edda; color:#155724; }
@@ -152,7 +154,7 @@
           <span class="status-badge status-${o.status.name().toLowerCase()}">${o.status.label}</span>
         </td>
         <td>
-          <span class="status-badge sig-${o.sigStatus}">${o.sigStatus}</span>
+          <span class="status-badge sig-${o.sigStatus}">${o.sigStatusLabel}</span>
         </td>
         <td class="action-btns" style="justify-content: center;">
 
@@ -170,17 +172,11 @@
               </c:if>
             </select>
           </form>
-              <c:if test="${o.sigStatus != 'UNSIGNED' && o.sigStatus != 'KEY_REVOKED'}">
+              <c:if test="${o.status.name() == 'PENDING'}">
                 <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Xác nhận chữ kí</a>
               </c:if>
               <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết chữ ký</a>
-            <%-- Nút Xóa --%>
-          <a href="adminOrder?action=delete&id=${o.id}"
-             class="btn-delete"
-             onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')"
-             title="Xóa">
-            <i class="fas fa-trash"></i>
-          </a>
+            
 
         </td>
       </tr>

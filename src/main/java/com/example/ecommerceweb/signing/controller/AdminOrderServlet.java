@@ -36,13 +36,6 @@ public class AdminOrderServlet extends HttpServlet {
                 orderService.updateStatus(idUpdate, newStatus);
                 response.sendRedirect("adminOrder");
                 break;
-
-            case "delete":
-                int idDelete = Integer.parseInt(request.getParameter("id"));
-                orderService.deleteOrder(idDelete);
-                response.sendRedirect("adminOrder");
-                break;
-
             case "verify":
                 verifyOrder(request, response);
                 break;

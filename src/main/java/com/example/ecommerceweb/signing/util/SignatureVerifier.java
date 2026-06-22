@@ -14,17 +14,6 @@ import java.security.PublicKey;
 import java.util.Base64;
 import java.util.List;
 
-/**
- * Xác minh chữ ký số cho đơn hàng, tương thích với Tool Ký Số (desktop):
- *
- *   1. Băm canonical_json bằng SHA-256 -> chuỗi hex (lowercase).
- *   2. Chữ ký = RSA "giải mã" (Cipher RSA/ECB/PKCS1Padding, DECRYPT_MODE,
- *      dùng PUBLIC KEY) của chuỗi Base64 chữ ký -> ra lại chuỗi hex của hash.
- *   3. So sánh hash tính lại với hash được giải ra từ chữ ký.
- *
- * Đây KHÔNG phải chuẩn java.security.Signature (SHA256withRSA), mà là kiểu
- * "raw RSA" do Tool Ký Số sử dụng: ký = RSA private-key "encrypt" của hex(SHA-256(json)).
- */
 public class SignatureVerifier {
 
     private static final String RSA_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
@@ -34,13 +23,8 @@ public class SignatureVerifier {
     	 String signature, result;
          KeyStore key;
          for (Order order : orders) {
-        	 if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.SIGNED)) continue;
+        	 if(order.getSigStatus().equals(SignatureStatus.SIGNED)) continue;
         	 
-             signature = order.getSignature();
-             if (signature == null || signature.trim().isEmpty()) {
-                 continue;
-             }
-
              key = KeyDAO.getKeyById(order.getKeyId());
              result = SignatureVerifier.verify(order, key);
 
@@ -54,16 +38,18 @@ public class SignatureVerifier {
     
     // Verify đơn hàng và trả về trạng thái chữ ký
     public static String verify(Order order, KeyStore key) {
-    	// Kiểm tra nếu trạng thái đơn hàng không phải đang giao hoặc hoàn thành và key đã bị thu hồi thì đổi trang thái "KEY_REVOKED"
-        if (key == null ||
-                (order.getStatus() != OrderStatus.COMPLETED && order.getStatus() != OrderStatus.SHIPPING
-                        && !"ACTIVE".equalsIgnoreCase(key.getStatus()))) {
+    	if (key == null) {
+    		return SignatureStatus.UNSIGNED;
+    	}
+    	// Nếu đơn hàng đã được ký và chưa được xác nhận và user báo mất key => doi
+        if (order.getStatus() == OrderStatus.PENDING 
+        		&& (order.getSigStatus() == SignatureStatus.SIGNED && order.getSigStatus() == SignatureStatus.MISMATCH)
+                && !"ACTIVE".equalsIgnoreCase(key.getStatus())) {
             return SignatureStatus.KEY_REVOKED;
         }
         
         String signature = order.getSignature();
         String canonicalJson = order.getCanonicalJson();
-
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
