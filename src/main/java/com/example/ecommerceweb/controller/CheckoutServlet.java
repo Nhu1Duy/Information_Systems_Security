@@ -59,6 +59,7 @@ public class CheckoutServlet extends HttpServlet {
             OrderItem oi = new OrderItem();
             oi.setOrderId(orderId);
             oi.setProductId(ci.getProduct().getId());
+            oi.setProductName(ci.getProduct().getName());
             oi.setQuantity(ci.getQuantity());
             oi.setPrice(ci.getProduct().getPrice());
             items.add(oi);

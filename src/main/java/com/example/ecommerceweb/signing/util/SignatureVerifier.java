@@ -23,7 +23,7 @@ public class SignatureVerifier {
     	 String signature, result;
          KeyStore key;
          for (Order order : orders) {
-        	 if(order.getSigStatus().equals(SignatureStatus.SIGNED)) continue;
+             if (order.getKeyId() == 0 && order.getSignature() == null) continue;
         	 
              key = KeyDAO.getKeyById(order.getKeyId());
              result = SignatureVerifier.verify(order, key);
@@ -49,7 +49,7 @@ public class SignatureVerifier {
         }
         
         String signature = order.getSignature();
-        String canonicalJson = order.getCanonicalJson();
+        String canonicalJson = OrderDAO.buildCanonicalJsonFromDB(order.getId());
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
