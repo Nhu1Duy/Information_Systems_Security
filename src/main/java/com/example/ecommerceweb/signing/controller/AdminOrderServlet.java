@@ -31,9 +31,9 @@ public class AdminOrderServlet extends HttpServlet {
 
         switch (action) {
             case "updateStatus":
-                int idUpdate = Integer.parseInt(request.getParameter("id"));
+                int id = Integer.parseInt(request.getParameter("id"));
                 OrderStatus newStatus = OrderStatus.fromDbValue(request.getParameter("status"));
-                orderService.updateStatus(idUpdate, newStatus);
+                orderService.updateStatus(id, newStatus);
                 response.sendRedirect("adminOrder");
                 break;
             case "verify":
@@ -78,21 +78,21 @@ public class AdminOrderServlet extends HttpServlet {
 
     private void handleDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int detailId = Integer.parseInt(request.getParameter("id"));
-        Order detailOrder = orderService.getOrderById(detailId);
+        int id = Integer.parseInt(request.getParameter("id"));
+        Order order = orderService.getOrderById(id);
 
-        KeyStore detailKey = null;
-        if (detailOrder != null && detailOrder.getKeyId() > 0) {
-            detailKey = keyService.getKeyById(detailOrder.getKeyId());
-            request.setAttribute("detailKey", detailKey);
+        KeyStore key = null;
+        if (order != null) {
+            key = keyService.getKeyById(order.getKeyId());
+            request.setAttribute("detailKey", key);
         }
-        if (detailKey != null) {
-            Date revokedKeyDate = detailKey.getRevokedAt() != null
-                    ? Date.from(detailKey.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant())
+        if (key != null) {
+            Date revokedKeyDate = key.getRevokedAt() != null
+                    ? Date.from(key.getRevokedAt().atZone(ZoneId.systemDefault()).toInstant())
                     : null;
             request.setAttribute("revokedDate", revokedKeyDate);
         }
-        request.setAttribute("detailOrder", detailOrder);
+        request.setAttribute("detailOrder", order);
         request.getRequestDispatcher("WEB-INF/sign/adminOrderDetail.jsp")
                 .forward(request, response);
     }

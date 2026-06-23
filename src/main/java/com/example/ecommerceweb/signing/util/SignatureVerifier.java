@@ -11,6 +11,7 @@ import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -23,8 +24,12 @@ public class SignatureVerifier {
     	 String signature, result;
          KeyStore key;
          for (Order order : orders) {
-             if (order.getKeyId() == 0 && order.getSignature() == null) continue;
-        	 
+             // Nếu đơn hàng đã bị thu hồi key thì không cần verify lại
+             if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.KEY_REVOKED)) {
+                 continue;
+             }
+             if (order.getKeyId() == 0) continue;
+
              key = KeyDAO.getKeyById(order.getKeyId());
              result = SignatureVerifier.verify(order, key);
 
@@ -38,63 +43,50 @@ public class SignatureVerifier {
     
     // Verify đơn hàng và trả về trạng thái chữ ký
     public static String verify(Order order, KeyStore key) {
+    	if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.KEY_REVOKED)) {
+   		 	return SignatureStatus.KEY_REVOKED;
+   	 	}
     	if (key == null) {
     		return SignatureStatus.UNSIGNED;
     	}
-    	// Nếu đơn hàng đã được ký và chưa được xác nhận và user báo mất key => doi
-        if (order.getStatus() == OrderStatus.PENDING 
-        		&& (order.getSigStatus() == SignatureStatus.SIGNED && order.getSigStatus() == SignatureStatus.MISMATCH)
-                && !"ACTIVE".equalsIgnoreCase(key.getStatus())) {
-            return SignatureStatus.KEY_REVOKED;
-        }
+    	// Nếu đơn hàng đã được ký và chưa được xác nhận và user báo mất key => trả về trạng thái key đã bị thu hồi
+    	if(key.getRevokedAt() != null) {
+    		if(order.getStatus().equals(OrderStatus.PENDING) 
+            		&& (order.getSigStatus().equalsIgnoreCase(SignatureStatus.SIGNED) || order.getSigStatus().equalsIgnoreCase(SignatureStatus.MISMATCH))) {
+    			return SignatureStatus.KEY_REVOKED;
+    		}
+    	}
         
         String signature = order.getSignature();
-        String canonicalJson = OrderDAO.buildCanonicalJsonFromDB(order.getId());
+
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
-        if (canonicalJson == null || canonicalJson.isBlank()) {
-            return SignatureStatus.MISMATCH;
-        }
-
+        
+        // So sánh canonicalJson đã băm với chữ ký của order đã được giải mã
+        String canonicalJson = OrderDAO.buildCanonicalJsonFromDB(order.getId());
+	if (canonicalJson == null || canonicalJson.isBlank()) {
+            return SignatureStatus.MISMATCH;	
+	}
         try {
-            // 1. Băm lại đơn hàng bằng SHA-256 -> hex
-            String expectedHashHex = sha256Hex(canonicalJson);
-
-            //debug
-            System.out.println("[WEB] canonicalJson  = " + canonicalJson);
-            System.out.println("[WEB] expectedHash   = " + expectedHashHex);
-            System.out.println("[WEB] expectedHash.len = " + expectedHashHex.length());
-
-            // 2. Giải mã chữ ký bằng khóa công khai
+            String hashJson = sha256Hex(canonicalJson);
             PublicKey publicKey = RsaKeyCodec.decodePublicKey(key.getPublicKey());
 
             Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
-            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(signature.trim()));
-            String signedHashHex = new String(decryptedBytes, StandardCharsets.UTF_8);
-            //debug
-            System.out.println("[WEB] signedHashHex  = " + signedHashHex);
-            System.out.println("[WEB] signedHash.len = " + signedHashHex.length());
-            System.out.println("[WEB] match = " + expectedHashHex.equals(signedHashHex));
-            System.out.println("----------------" );
-            // 3. So sánh
-            return expectedHashHex.equals(signedHashHex)
+            byte[] data = cipher.doFinal(Base64.getDecoder().decode(signature.trim()));
+            String plainText = new String(data, StandardCharsets.UTF_8);
+            
+            return hashJson.equals(plainText)
                     ? SignatureStatus.SIGNED
                     : SignatureStatus.MISMATCH;
-
-
         } catch (Exception e) {
-            System.out.println("[WEB] EXCEPTION: " + e.getClass().getName() + " - " + e.getMessage());
             e.printStackTrace();
             return SignatureStatus.MISMATCH;
         }
     }
 
-    /**
-     * Băm chuỗi bằng SHA-256, trả về chuỗi hex viết thường (giống HashFunction.hashString
-     * trong Tool Ký Số).
-     */
+    // Dùng SHA-256 để băm chuỗi json
     private static String sha256Hex(String input) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));

@@ -52,12 +52,12 @@ public class Order {
     public void setKeyId(int keyId) { this.keyId = keyId; }
 
     public String getSigStatusLabel() {
-        if (sigStatus == null) return "CHƯA KÝ";
+        if (sigStatus == null) return "Chưa ký";
         switch (sigStatus) {
-            case "SIGNED":      return "ĐÃ KÝ";
-            case "MISMATCH":    return "KHÔNG KHỚP";
-            case "KEY_REVOKED": return "KHÓA BỊ THU HỒI";
-            default:            return "CHƯA KÝ";
+            case "SIGNED":      return "Hợp lệ";
+            case "MISMATCH":    return "Không khớp";
+            case "KEY_REVOKED": return "Khoá bị thu hồi";
+            default:            return "Chưa ký";
         }
     }
 }

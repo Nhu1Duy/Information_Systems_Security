@@ -12,67 +12,59 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
-    .admin-table {
-      width:100%;
-      border-collapse:collapse;
-      margin-top:20px;
-      background: var(--card-bg);
-      border-radius:8px;
-      overflow:hidden;
-      box-shadow: var(--shadow); 
-    }
-    .admin-table th, .admin-table td {
-      padding: 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-      font-size:14px;
-    }
-    .admin-table th {
-      background-color: var(--primary-green);
-      color: white;
-    }
-    .action-btns {
-      display: flex;
-      gap: 5px;
-      align-items: center;
-    }
-    .status-badge {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: inline-block;
-    }
+    .orders-table { width:100%; border-collapse:collapse; margin-top:20px;
+            background: var(--card-bg); border-radius:8px; overflow:hidden; box-shadow: var(--shadow); }
+        .orders-table th, .orders-table td { padding:14px; text-align:left;
+            border-bottom:1px solid var(--border-color); font-size:14px; }
+        .orders-table th { background-color: var(--primary-green); color:#fff; }
+        
+    .status-badge { padding:5px 10px; border-radius:20px; font-size:.85rem; font-weight:600; display:inline-block; }
     .status-pending   { background: #fff3cd; color: #856404; }
     .status-shipping  { background: #cce5ff; color: #004085; }
     .status-completed { background: #d4edda; color: #155724; }
     .status-cancelled { background: #f8d7da; color: #721c24; }
-    .status-confirmed { background: #ddd6fe; color: #5b21b6; }
+    .status-confirmed { background: #ffe5d0; color: #cc5500; }
 
     .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
     .sig-SIGNED   { background:#d4edda; color:#155724; }
     .sig-MISMATCH { background:#f8d7da; color:#721c24; }
     .sig-KEY_REVOKED { background: #ffe5d0; color: #cc5500; }
-
-    .btn-delete {
-      background: #f44336;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
+    
+    .action-btns {
+      display: flex;
+      gap: 5px;
+      align-items: center;
     }
+    
+    .btn-detail, .btn-verify {
+		padding: 5px 12px;
+		border-radius: 6px;
+		font-size: 12px;
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: all 0.2s ease;
+    }
+		
+    .btn-detail {
+		background: #fffbeb;
+		color: #b45309;
+		border: 1px solid #fcd34d;
+    }
+		
+    .btn-detail:hover {
+		background: #fef3c7;
+    }
+		
     .btn-verify {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-      white-space: nowrap;
+		background: #ecfdf5;
+		color: #15803d;
+		border: 1px solid #86efac;
+    }
+		
+    .btn-verify:hover {
+		background: #d1fae5;
     }
     select[name="status"] {
       padding: 5px;
@@ -114,27 +106,27 @@
   <c:if test="${not empty param.verifyResult}">
     <c:choose>
       <c:when test="${param.verifyResult == 'SIGNED'}">
-        <div class="alert-success">✅ Đơn hàng #${param.orderId} — Đã ký, chữ ký hợp lệ.</div>
+        <div class="alert-success">Đơn hàng #${param.orderId} — Chữ ký hợp lệ.</div>
       </c:when>
       <c:when test="${param.verifyResult == 'MISMATCH'}">
-        <div class="alert-danger">⚠️ Đơn hàng #${param.orderId} — Dữ liệu không đồng bộ (chữ ký không khớp hoặc khóa không hợp lệ)!</div>
+        <div class="alert-danger">Đơn hàng #${param.orderId} — Chữ ký không khớp!</div>
       </c:when>
       <c:otherwise>
-        <div class="alert-danger">⚠️ Đơn hàng #${param.orderId} — Đơn hàng chưa được ký!</div>
+        <div class="alert-danger">Đơn hàng #${param.orderId} — Đơn hàng chưa được ký hoặc khoá đã bị thu hồi!</div>
       </c:otherwise>
     </c:choose>
   </c:if>
 
-  <table class="admin-table">
+  <table class="orders-table">
     <thead>
     <tr>
-      <th>Mã ĐH</th>
-      <th>Khách hàng</th>
-      <th>Ngày đặt</th>
-      <th>Tổng tiền</th>
-      <th>Trạng thái</th>
-      <th>Chữ ký</th>
-      <th style="text-align: center;">Thao tác</th>
+      <th width=8%>Mã ĐH</th>
+      <th width=13%>Khách hàng</th>
+      <th width=15%>Ngày đặt</th>
+      <th width=10%>Tổng tiền</th>
+      <th width=14%>Trạng thái đơn</th>
+      <th width=17%>Trạng thái chữ ký</th>
+      <th style="justify-content: center;">Thao tác</th>
     </tr>
     </thead>
     <tbody>
@@ -146,7 +138,7 @@
           <fmt:formatDate value="${o.orderDate}" pattern="dd/MM/yyyy HH:mm"/>
         </td>
         <td>
-          <strong style="color: var(--primary-green);">
+          <strong>
             <fmt:formatNumber value="${o.total}" type="currency" currencySymbol="VND" maxFractionDigits="0"/>
           </strong>
         </td>
@@ -156,7 +148,7 @@
         <td>
           <span class="status-badge sig-${o.sigStatus}">${o.sigStatusLabel}</span>
         </td>
-        <td class="action-btns" style="justify-content: center;">
+        <td class="action-btns">
 
             <%-- Dropdown đổi trạng thái đơn --%>
           <form action="adminOrder" method="GET" style="display:inline-flex; align-items:center;">
@@ -166,16 +158,17 @@
               <option value="PENDING"   ${o.status.name() == 'PENDING'   ? 'selected' : ''}>Chờ xác nhận</option>
               <option value="CONFIRMED" ${o.status.name() == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
               <option value="CANCELLED" ${o.status.name() == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-              <c:if test="${o.sigStatus == 'SIGNED'}">
+              <c:if test="${o.sigStatus == 'SIGNED' && o.status.name() != 'PENDING' && o.status.name() != 'CANCELLED'}">
                 <option value="SHIPPING"  ${o.status.name() == 'SHIPPING'  ? 'selected' : ''}>Đang giao</option>
                 <option value="COMPLETED" ${o.status.name() == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
               </c:if>
             </select>
           </form>
-              <c:if test="${o.status.name() == 'PENDING'}">
-                <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">🔍 Xác nhận chữ kí</a>
+              <c:if test="${o.status.name() == 'PENDING' 
+              		&& (o.sigStatus == 'SIGNED' || o.sigStatus == 'MISMATCH')}">
+                <a href="adminOrder?action=verify&id=${o.id}" class="btn-verify">Verify chữ ký</a>
               </c:if>
-              <a href="adminOrder?action=detail&id=${o.id}" class="btn-verify" style="background:#6366f1;">📄 Chi tiết chữ ký</a>
+              <a href="adminOrder?action=detail&id=${o.id}" class="btn-detail">Chi tiết chữ ký</a>
             
 
         </td>

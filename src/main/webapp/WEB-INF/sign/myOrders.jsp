@@ -20,16 +20,14 @@
         .status-shipping  { background:#cce5ff; color:#004085; }
         .status-completed { background:#d4edda; color:#155724; }
         .status-cancelled { background:#f8d7da; color:#721c24; }
-        .status-confirmed { background: #ddd6fe; color: #5b21b6; }
+        .status-confirmed { background: #ffe5d0; color: #cc5500; }
 
         .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
         .sig-SIGNED   { background:#d4edda; color:#155724; }
         .sig-MISMATCH { background:#f8d7da; color:#721c24; }
         .sig-KEY_REVOKED { background: #ffe5d0; color: #cc5500; }
 
-        .btn-sign { background:#16a34a; color:#fff; border:none; padding:6px 14px;
-            border-radius:4px; font-size:13px; text-decoration:none; white-space:nowrap; }
-
+        
         .detail-box { font-family:monospace; font-size:11px; background:#1e1e1e; color:#d4d4d4;
             padding:.75rem; border-radius:6px; white-space:pre-wrap; word-break:break-all;
             max-height:140px; overflow-y:auto; margin-top:6px; }
@@ -38,17 +36,36 @@
         .verify-bad  { color:#721c24; font-weight:600; }
         .verify-warn { color:#856404; }
         
-        .btn-verify {
-	      background: #2563eb;
-	      color: #fff;
-	      border: none;
-	      padding: 5px 12px;
-	      border-radius: 4px;
-	      cursor: pointer;
-	      font-size: 13px;
-	      text-decoration: none;
-	      white-space: nowrap;
-	    }
+		.btn-detail, .btn-sign {
+		    padding: 5px 12px;
+		    border-radius: 6px;
+		    font-size: 12px;
+		    font-weight: 600;
+		    text-decoration: none;
+		    cursor: pointer;
+		    white-space: nowrap;
+		    transition: all 0.2s ease;
+		}
+		
+		.btn-detail {
+		    background: #fffbeb;
+		    color: #b45309;
+		    border: 1px solid #fcd34d;
+		}
+		
+		.btn-detail:hover {
+		    background: #fef3c7;
+		}
+		
+		.btn-sign {
+		    background: #ecfdf5;
+		    color: #15803d;
+		    border: 1px solid #86efac;
+		}
+		
+		.btn-sign:hover {
+		    background: #d1fae5;
+		}
         details > summary { cursor:pointer; color:#2563eb; font-size:13px; }
     </style>
 </head>
@@ -56,7 +73,9 @@
 <jsp:include page="/WEB-INF/layout/header.jsp"/>
 
 <main class="container" style="margin-top:2rem; margin-bottom:4rem;">
-    <h1>Đơn hàng của tôi</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    	<h1>Đơn hàng của tôi</h1>
+  	</div>
 
     <c:if test="${empty orders}">
         <p style="margin-top:1rem; color:#666;">Bạn chưa có đơn hàng nào.</p>
@@ -66,12 +85,12 @@
         <table class="orders-table">
             <thead>
             <tr>
-                <th>Mã ĐH</th>
-                <th>Ngày đặt</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái đơn</th>
-                <th>Trạng thái chữ ký</th>
-                <th>Chi tiết / Thao tác</th>
+                <th width=8%>Mã ĐH</th>
+                <th width=15%>Ngày đặt</th>
+                <th width=13%>Tổng tiền</th>
+                <th width=20%>Trạng thái đơn</th>
+                <th width=20%>Trạng thái chữ ký</th>
+                <th style="justify-content: center;">Thao tác</th>
             </tr>
             </thead>
             <tbody>
@@ -80,7 +99,7 @@
                     <td><strong>#${o.id}</strong></td>
                     <td><fmt:formatDate value="${o.orderDate}" pattern="dd/MM/yyyy HH:mm"/></td>
                     <td>
-                        <strong style="color: var(--primary-green);">
+                        <strong>
                             <fmt:formatNumber value="${o.total}" type="currency" currencySymbol="VND" maxFractionDigits="0"/>
                         </strong>
                     </td>
@@ -88,12 +107,12 @@
                     <td><span class="status-badge sig-${o.sigStatus}">${o.sigStatusLabel}</span></td>
                     <td>
                         <c:if test="${(o.sigStatus != 'SIGNED' && o.sigStatus != 'KEY_REVOKED') && o.status.name() == 'PENDING'}">
-                            <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">✍️ Ký đơn hàng</a>
+                            <a href="${pageContext.request.contextPath}/sign-order?orderId=${o.id}" class="btn-sign">Ký đơn hàng</a>
                         </c:if>
                         <c:if test="${o.sigStatus != 'UNSIGNED'}">
                             <a href="${pageContext.request.contextPath}/myOrders?action=detail&id=${o.id}"
-                               class="btn-verify" style="background:#6366f1;">
-                                📄 Chi tiết chữ ký
+                               class="btn-detail">
+                                Chi tiết chữ ký
                             </a>
                         </c:if>
                     </td>
