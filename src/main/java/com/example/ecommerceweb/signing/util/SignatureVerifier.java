@@ -56,12 +56,15 @@ public class SignatureVerifier {
     	}
         
         String signature = order.getSignature();
-        String canonicalJson = order.getCanonicalJson();
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
         
         // So sánh canonicalJson đã băm với chữ ký của order đã được giải mã
+        String canonicalJson = order.getCanonicalJson();
+	if (canonicalJson == null || canonicalJson.isBlank()) {
+            return SignatureStatus.MISMATCH;	
+	}
         try {
             String hashJson = sha256Hex(canonicalJson);
             PublicKey publicKey = RsaKeyCodec.decodePublicKey(key.getPublicKey());
