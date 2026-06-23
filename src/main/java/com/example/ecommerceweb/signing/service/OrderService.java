@@ -59,7 +59,9 @@ public class OrderService {
 
         OrderDAO.updateSigStatus(orderId, result);
         if (SignatureStatus.SIGNED.equals(result)) {
-            OrderDAO.updateStatus(orderId, OrderStatus.SHIPPING);
+            OrderDAO.updateStatus(orderId, OrderStatus.CONFIRMED);
+        } else if (SignatureStatus.MISMATCH.equals(result)) {
+            OrderDAO.updateStatus(orderId, OrderStatus.CANCELLED);
         }
 
         if (SignatureStatus.SIGNED.equals(result)) return "SIGNED";

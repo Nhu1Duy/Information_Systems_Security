@@ -24,10 +24,12 @@ public class SignatureVerifier {
     	 String signature, result;
          KeyStore key;
          for (Order order : orders) {
-        	 // Nếu đơn hàng đã bị thu hồi key thì không cần verify lại
-        	 if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.KEY_REVOKED)) {
-        		 continue;
-        	 }
+             // Nếu đơn hàng đã bị thu hồi key thì không cần verify lại
+             if(order.getSigStatus().equalsIgnoreCase(SignatureStatus.KEY_REVOKED)) {
+                 continue;
+             }
+             if (order.getKeyId() == 0) continue;
+
              key = KeyDAO.getKeyById(order.getKeyId());
              result = SignatureVerifier.verify(order, key);
 
@@ -56,12 +58,13 @@ public class SignatureVerifier {
     	}
         
         String signature = order.getSignature();
+
         if (signature == null || signature.isBlank()) {
             return SignatureStatus.UNSIGNED;
         }
         
         // So sánh canonicalJson đã băm với chữ ký của order đã được giải mã
-        String canonicalJson = order.getCanonicalJson();
+        String canonicalJson = OrderDAO.buildCanonicalJsonFromDB(order.getId());
 	if (canonicalJson == null || canonicalJson.isBlank()) {
             return SignatureStatus.MISMATCH;	
 	}
