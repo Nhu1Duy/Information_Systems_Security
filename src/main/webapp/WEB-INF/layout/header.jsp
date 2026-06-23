@@ -53,8 +53,8 @@
                 <i class="fas fa-shopping-cart"></i>
             </a>
 
-            <c:if test="${not empty sessionScope.user}">
-                <a href="hhttps://drive.google.com/file/d/1va-PY5UD5vOUjkzxlKWiq1Y2ZqKme7Oa/view?usp=sharing"
+            <c:if test="${not empty sessionScope.user && sessionScope.user.role != 'admin'}">
+                <a href="https://drive.google.com/file/d/1va-PY5UD5vOUjkzxlKWiq1Y2ZqKme7Oa/view?usp=sharing"
                    class="download-sign-tool-btn"
                    target="_blank"
                    rel="noopener"
