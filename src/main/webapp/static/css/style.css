@@ -330,6 +330,36 @@ body.dark-mode .theme-toggle-btn .fa-moon { display: inline; } /* Show moon in d
     background-color: #FFD700; /* Darker yellow */
 }
 
+.btn-danger {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+    color: #fff;
+}
+
+.btn-muted,
+.btn-muted:hover {
+    background-color: #e5e7eb;
+    color: #374151;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.text-muted {
+    color: #555;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
 /* Add to Cart Button Specifics */
 .add-to-cart-btn {
     width: 100%;
@@ -1178,3 +1208,245 @@ product-detail-content {
 .sig-UNSIGNED { background:#e2e3e5; color:#383d41; }
 .sig-SIGNED   { background:#d4edda; color:#155724; }
 .sig-MISMATCH { background:#f8d7da; color:#721c24; }
+
+/* --- Key Management Page --- */
+.key-page {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+}
+
+.key-page .btn,
+.key-choice-dialog .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: var(--font-secondary);
+    font-weight: 400;
+    transform: none;
+}
+
+.key-page .btn:hover,
+.key-choice-dialog .btn:hover {
+    transform: none;
+}
+
+.key-page .btn-primary,
+.key-choice-dialog .btn-primary {
+    background: #16a34a;
+    color: #fff;
+}
+
+.key-page .btn-secondary,
+.key-choice-dialog .btn-secondary {
+    background: #374151;
+    color: #fff;
+}
+
+.key-page .btn-danger,
+.key-choice-dialog .btn-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.key-page .btn-muted,
+.key-page .btn-muted:hover,
+.key-choice-dialog .btn-muted,
+.key-choice-dialog .btn-muted:hover {
+    background: #e5e7eb;
+    color: #374151;
+    cursor: not-allowed;
+}
+
+.key-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.key-status-active {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.key-status-revoked {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.key-pem {
+    font-family: monospace;
+    font-size: 11px;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 6px;
+    word-break: break-all;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.alert-warn {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.history-table th,
+.history-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.history-table th {
+    background: #16a34a;
+    color: #fff;
+}
+
+.key-choice-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 999;
+}
+
+.key-choice-dialog {
+    background: var(--card-bg);
+    border-radius: 8px;
+    width: min(620px, 100%);
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.key-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.key-choice-box {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.key-choice-box h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.gmail-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.gmail-row input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.own-key-layout {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.own-key-note {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #166534;
+}
+
+.own-public-key-input {
+    width: 100%;
+    min-height: 160px;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.own-key-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.own-key-import-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.own-key-file-name {
+    color: #555;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.own-key-file-input {
+    display: none;
+}
+
+.key-choice-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 18px;
+}
+
+.key-choice-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
+.private-key-source {
+    display: none;
+}
+
+@media (max-width: 680px) {
+    .key-choice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .own-key-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .gmail-row {
+        flex-direction: column;
+    }
+}
