@@ -37,16 +37,12 @@ public class KeyService {
             throw new IllegalStateException("Bạn cần báo mất/thu hồi khóa hiện tại trước khi tạo khóa mới.");
         }
 
-        KeyPair pair = RsaKeyCodec.generateKeyPair();
-        String pubB64 = RsaKeyCodec.encodePublicKey(pair.getPublic());
-        String privB64 = RsaKeyCodec.encodePrivateKey(pair.getPrivate());
+        KeyPair keyPair = RsaKeyCodec.generateKeyPair();
+        String pubKey = RsaKeyCodec.encodePublicKey(keyPair.getPublic());
+        String privKey = RsaKeyCodec.encodePrivateKey(keyPair.getPrivate());
 
-        KeyDAO.insertKey(userId, pubB64);
-
-        pair = null;
-        System.gc();
-
-        return new GenerateKeyResult(privB64, "Đã tạo khóa mới, hãy lưu khóa và không chia sẻ khóa với bất kì ai.");
+        KeyDAO.insertKey(userId, pubKey);
+        return new GenerateKeyResult(privKey, "Đã tạo khóa mới, hãy lưu khóa và không chia sẻ khóa với bất kì ai.");
     }
 
     public void useOwnPublicKey(int userId, String publicKeyText) throws Exception {

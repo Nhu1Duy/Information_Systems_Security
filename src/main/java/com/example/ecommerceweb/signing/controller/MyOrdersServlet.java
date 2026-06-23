@@ -13,58 +13,59 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import java.io.IOException;import java.time.LocalDateTime;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
 @WebServlet("/myOrders")
 public class MyOrdersServlet extends HttpServlet {
-    private final OrderService orderService = new OrderService();
-    private final KeyService   keyService   = new KeyService();
+	private final OrderService orderService = new OrderService();
+	private final KeyService keyService = new KeyService();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            resp.sendRedirect("login");
-            return;
-        }
-        String action = req.getParameter("action");
-        if (action == null) action = "list";
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		User user = (User) session.getAttribute("user");
+		if (user == null) {
+			resp.sendRedirect("login");
+			return;
+		}
+		String action = req.getParameter("action");
+		if (action == null)
+			action = "list";
 
-        switch (action) {       
-            case "detail":
-                int detailId = Integer.parseInt(req.getParameter("id"));
-                Order detailOrder = orderService.getOrderById(detailId);
+		switch (action) {
+		case "detail":
+			int id = Integer.parseInt(req.getParameter("id"));
+			Order order = orderService.getOrderById(id);
+			if(order == null) {
+				resp.sendRedirect("myOrders");
+				return;
+			}
+			KeyStore key = keyService.getKeyById(order.getKeyId());
+			req.setAttribute("detailKey", key);
 
-                KeyStore detailKey = null;
-                if (detailOrder != null && detailOrder.getKeyId() > 0) {
-                    detailKey = keyService.getKeyById(detailOrder.getKeyId());
-                    req.setAttribute("detailKey", detailKey);
-                }
-                req.setAttribute("detailOrder", detailOrder);
-                req.getRequestDispatcher("WEB-INF/sign/myOrderDetail.jsp").forward(req, resp);
-                break;
+			req.setAttribute("detailOrder", order);
+			req.getRequestDispatcher("WEB-INF/sign/myOrderDetail.jsp").forward(req, resp);
+			break;
 
-            default:
-            	int userId = user.getId();
+		default:
+			int userId = user.getId();
 
-                List<Order> orders = OrderDAO.getOrdersByUserId(userId);
-                orders = SignatureVerifier.verifyOrders(orders);
+			List<Order> orders = OrderDAO.getOrdersByUserId(userId);
+			orders = SignatureVerifier.verifyOrders(orders);
 
-                req.setAttribute("orders", orders);
-                req.setAttribute("currentPage", "myOrders");
-                req.getRequestDispatcher("/WEB-INF/sign/myOrders.jsp").forward(req, resp);
-                break;
-        }
-    }
-    
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-    	doGet(req, resp);    
-    }
+			req.setAttribute("orders", orders);
+			req.setAttribute("currentPage", "myOrders");
+			req.getRequestDispatcher("/WEB-INF/sign/myOrders.jsp").forward(req, resp);
+			break;
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
 }

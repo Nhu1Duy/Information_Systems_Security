@@ -86,7 +86,7 @@
 
     <a href="myOrders" class="btn-back">← Quay lại danh sách</a>
 
-    <h2 style="margin-bottom:1rem;">📋 Chi tiết chữ ký — Đơn hàng #${detailOrder.id}</h2>
+    <h2 style="margin-bottom:1rem;">Chi tiết chữ ký — Đơn hàng #${detailOrder.id}</h2>
 
     <div class="meta-row">
         <div class="meta-item">Khách hàng: <strong>${detailOrder.userId}</strong></div>
@@ -99,13 +99,12 @@
         </div>
     </div>
 
-    <%-- 1. Canonical JSON --%>
     <div class="detail-card">
-        <h3>📄 1. Canonical JSON (dữ liệu đã ký)</h3>
+        <h3>Canonical JSON (dữ liệu để ký)</h3>
         <c:choose>
             <c:when test="${not empty detailOrder.canonicalJson}">
                 <div class="code-box" id="jsonBox">${detailOrder.canonicalJson}</div>
-                <button class="btn-copy" onclick="copyText('jsonBox', this)">📋 Copy JSON</button>
+                <button class="btn-copy" onclick="copyText('jsonBox', this)">Copy JSON</button>
             </c:when>
             <c:otherwise>
                 <p class="no-data">Đơn hàng chưa có canonical JSON.</p>
@@ -113,13 +112,12 @@
         </c:choose>
     </div>
 
-    <%-- 2. Public Key --%>
     <div class="detail-card">
-        <h3>🔑 2. Khoá công khai (Public Key)</h3>
+        <h3>Khoá công khai (Public Key)</h3>
         <c:choose>
             <c:when test="${not empty detailKey}">
                 <div class="code-box" id="pubkeyBox">${detailKey.publicKey}</div>
-                <button class="btn-copy" onclick="copyText('pubkeyBox', this)">📋 Copy Public Key</button>
+                <button class="btn-copy" onclick="copyText('pubkeyBox', this)">Copy Public Key</button>
                 <p style="font-size:12px; color:#6b7280; margin-top:8px;">
                     Key ID: #${detailKey.id} &nbsp;|&nbsp;
                     Trạng thái: <strong>${detailKey.status}</strong>
@@ -136,11 +134,11 @@
 
     <%-- 3. Chữ ký --%>
     <div class="detail-card">
-        <h3>✍️ 3. Chữ ký số (Signature - Base64)</h3>
+        <h3>Chữ ký số (Signature)</h3>
         <c:choose>
             <c:when test="${not empty detailOrder.signature}">
                 <div class="code-box" id="sigBox">${detailOrder.signature}</div>
-                <button class="btn-copy" onclick="copyText('sigBox', this)">📋 Copy Signature</button>
+                <button class="btn-copy" onclick="copyText('sigBox', this)">Copy Signature</button>
             </c:when>
             <c:otherwise>
                 <p class="no-data">Đơn hàng chưa được ký.</p>

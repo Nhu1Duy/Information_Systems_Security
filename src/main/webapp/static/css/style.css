@@ -113,6 +113,7 @@ section {
     justify-content: space-between;
     align-items: center;
     height: 70px;
+    flex-wrap: nowrap;
 }
 
 .logo {
@@ -206,7 +207,6 @@ body.dark-mode .search-bar input::placeholder {
         /* Add specific mobile adjustments if needed */
     }
 }
-
 
 .nav-links {
     display: flex;
